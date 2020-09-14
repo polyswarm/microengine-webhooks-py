@@ -7,7 +7,7 @@ except IOError:
     long_description = ""
 
 setup(
-    name="microengine-webhooks-py",
+    name="microenginewebhookspy",
     version="0.1.0",
     description="Exemplar microengine using webhooks for upcoming API changes",
     license="MIT",

@@ -3,8 +3,8 @@ import dataclasses
 from typing import List
 from flask import Flask, request, jsonify
 
-from microenginewebhookpy.middleware import ValidateSenderMiddleware
-from microenginewebhookpy import scan
+from microenginewebhookspy.middleware import ValidateSenderMiddleware
+from microenginewebhookspy import scan
 
 app = Flask(__name__)
 
