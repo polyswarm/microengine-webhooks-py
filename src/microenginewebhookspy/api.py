@@ -1,8 +1,9 @@
 import dataclasses
 import enum
+import json
 import logging
-
 import requests
+
 from flask import request, jsonify, Blueprint
 from typing import List, Dict, Any
 
@@ -64,16 +65,19 @@ class Bounty:
         with session.post(self.response_url, json=dataclasses.asdict(scan_result)) as response:
             response.raise_for_status()
 
+    def __dict__(self):
+        return dataclasses.asdict(self)
 
-@api.route('/', method='POST')
+
+@api.route('/', methods=['POST'])
 def bounty_request_handler():
-    from microenginewebhookspy import scan
+    from microenginewebhookspy.scan import scan
     event_name = request.headers.get(POLYSWARM_EVENT_NAME_HEADER, '').lower()
 
     if event_name == 'bounty':
         try:
-            bounty = Bounty(**request.json)
-            scan.delay(bounty)
+            bounty = Bounty(**json.loads(request.get_data()))
+            scan.delay(dataclasses.asdict(bounty))
         except (KeyError, ValueError):
             logger.exception('Bad Request')
             return jsonify('Bad Request'), 400

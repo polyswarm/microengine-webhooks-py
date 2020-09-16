@@ -7,11 +7,14 @@ from microenginewebhookspy.api import Bounty, ScanResult, Verdict
 
 celery_app = Celery('tasks', broker=BROKER)
 
-EICAR_STRING = base64.b64decode(b'WDVPIVAlQEFQWzRcUFpYNTQoUF4pN0NDKTd9JEVJQ0FSLVNUQU5EQVJELUFOVElWSVJVUy1URVNULUZJTEUhJEgrSCo=')
+EICAR_STRING = base64.b64decode(
+    b'WDVPIVAlQEFQWzRcUFpYNTQoUF4pN0NDKTd9JEVJQ0FSLVNUQU5EQVJELUFOVElWSVJVUy1URVNULUZJTEUhJEgrSCo='
+)
 
 
 @celery_app.task
-def scan(bounty: Bounty):
+def scan(bounty):
+    bounty = Bounty(**bounty)
     if bounty.artifact_type.lower() != 'file':
         scan_result = ScanResult(Verdict.UNKNOWN, 1.0, {})
         bounty.send_assertion(scan_result)
