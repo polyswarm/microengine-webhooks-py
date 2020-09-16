@@ -2,8 +2,8 @@ import base64
 
 from celery import Celery
 
-from microenginewebhookpy.settings import BROKER
-from microenginewebhookpy.api import Bounty, ScanResult, Verdict
+from microenginewebhookspy.settings import BROKER
+from microenginewebhookspy.api import Bounty, ScanResult, Verdict
 
 celery_app = Celery('tasks', broker=BROKER)
 
