@@ -6,8 +6,6 @@ import requests
 from flask import request, jsonify, Blueprint
 from typing import List, Dict, Any
 
-from microenginewebhookspy import scan
-
 POLYSWARM_EVENT_NAME_HEADER = 'X-POLYSWARM-EVENT'
 
 logger = logging.getLogger(__name__)
@@ -31,8 +29,19 @@ class ScanResult:
     def __post_init__(self, verdict):
         self.verdict_str = verdict.value
 
+    def __eq__(self, other):
+        return isinstance(other, ScanResult) and other.verdict_str == self.verdict_str \
+             and other.confidence == self.confidence and other.metadata == self.metadata
 
-@dataclasses.dataclass
+    def __hash__(self):
+        calculated_hash = 7
+        calculated_hash = 53 * calculated_hash + hash(self.verdict_str)
+        calculated_hash = 53 * calculated_hash + hash(self.confidence)
+        # Cannot hash a dict
+        return calculated_hash
+
+
+@dataclasses.dataclass(frozen=True)
 class Bounty:
     guid: str
     artifact_type: str
@@ -58,6 +67,7 @@ class Bounty:
 
 @api.route('/', method='POST')
 def bounty_request_handler():
+    from microenginewebhookspy import scan
     event_name = request.headers.get(POLYSWARM_EVENT_NAME_HEADER, '').lower()
 
     if event_name == 'bounty':
