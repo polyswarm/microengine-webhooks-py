@@ -12,7 +12,8 @@ setup(
     description="Exemplar microengine using webhooks for upcoming API changes",
     license="MIT",
     author="PolySwarm Developers",
-    packages=find_packages(),
+    packages=find_packages('src'),
+    package_dir={'': 'src/'},
     install_requires=[
         "celery",
         "Flask",
