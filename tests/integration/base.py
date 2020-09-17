@@ -1,5 +1,6 @@
 import hmac
 import os
+import random
 import requests
 
 from flask import Flask, request, jsonify
@@ -9,12 +10,15 @@ API_KEY = os.environ.get('API_KEY')
 
 application = Flask(__name__)
 
-with open('tests/integration/test.json') as test:
-    contents = test.read().rstrip()
-    print(contents)
+with open('tests/integration/test-malicious.json') as test:
+    malicious_contents = test.read().rstrip()
 
-digest = hmac.new(API_KEY.encode('utf-8'), contents.encode('utf-8'), digestmod="sha256").hexdigest()
-print(digest)
+malicious_digest = hmac.new(API_KEY.encode('utf-8'), malicious_contents.encode('utf-8'), digestmod="sha256").hexdigest()
+
+with open('tests/integration/test-benign.json') as test:
+    benign_contents = test.read().rstrip()
+
+benign_digest = hmac.new(API_KEY.encode('utf-8'), benign_contents.encode('utf-8'), digestmod="sha256").hexdigest()
 
 
 @application.route("/", methods=['POST'])
@@ -27,6 +31,7 @@ def test_receiver():
 @application.route("/test", methods=['POST'])
 def test_scanner():
     session = requests.Session()
+    digest, contents = random.choice([(malicious_digest, malicious_contents), (benign_digest, benign_contents)])
     headers = {
         'Content-Type': "application/json",
         'X-POLYSWARM-SIGNATURE': digest,
