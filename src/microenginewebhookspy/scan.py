@@ -17,7 +17,7 @@ def scan(bounty):
     bounty = Bounty(**bounty)
     if bounty.artifact_type.lower() != 'file':
         scan_result = ScanResult(Verdict.UNKNOWN, 1.0, {})
-        bounty.send_assertion(scan_result)
+        bounty.post_scan_result(scan_result)
 
     content = bounty.download_artifact()
     if content == EICAR_STRING:
@@ -25,4 +25,4 @@ def scan(bounty):
     else:
         scan_result = ScanResult(Verdict.BENIGN, 1.0, {})
 
-    bounty.send_assertion(scan_result)
+    bounty.post_scan_result(scan_result)

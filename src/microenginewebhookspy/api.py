@@ -59,7 +59,7 @@ class Bounty:
             response.raise_for_status()
             return response.content
 
-    def send_assertion(self, scan_result: ScanResult):
+    def post_scan_result(self, scan_result: ScanResult):
         session = requests.Session()
         with session.post(self.response_url, json=dataclasses.asdict(scan_result)) as response:
             response.raise_for_status()
