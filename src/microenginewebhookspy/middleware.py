@@ -19,7 +19,7 @@ class ValidateSenderMiddleware:
             start_response("400 Bad Request", [('Content-Length', '0')])
             return []
 
-        if self.__valid_signature(wsgi_input, signature, API_KEY):
+        if self._valid_signature(wsgi_input, signature, API_KEY):
             environ['wsgi.input'] = BytesIO(wsgi_input)
             return self.app(environ, start_response)
         else:
@@ -27,7 +27,7 @@ class ValidateSenderMiddleware:
             return []
 
     @staticmethod
-    def __valid_signature(body, signature, api_key):
+    def _valid_signature(body, signature, api_key):
         digest = hmac.new(api_key.encode('utf-8'), body, digestmod="sha256").hexdigest()
         logger.debug('Comparing computed %s vs given %s', digest, signature)
         return hmac.compare_digest(digest, signature)
