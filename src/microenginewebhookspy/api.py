@@ -1,6 +1,5 @@
 import dataclasses
 import enum
-import json
 import logging
 import requests
 
@@ -76,7 +75,9 @@ def bounty_request_handler():
 
     if event_name == 'bounty':
         try:
-            bounty = Bounty(**json.loads(request.get_data()))
+            body = request.get_json()
+            bounty = Bounty(**body)
+            logger.debug('Kicking off new scan with %s', bounty)
             scan.delay(dataclasses.asdict(bounty))
         except (KeyError, ValueError):
             logger.exception('Bad Request')

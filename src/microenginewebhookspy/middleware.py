@@ -29,4 +29,5 @@ class ValidateSenderMiddleware:
     @staticmethod
     def __valid_signature(body, signature, api_key):
         digest = hmac.new(api_key.encode('utf-8'), body, digestmod="sha256").hexdigest()
+        logger.debug('Comparing computed %s vs given %s', digest, signature)
         return hmac.compare_digest(digest, signature)
