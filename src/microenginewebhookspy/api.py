@@ -79,7 +79,7 @@ def bounty_request_handler():
             bounty = Bounty(**body)
             logger.debug('Kicking off new scan with %s', bounty)
             scan.delay(dataclasses.asdict(bounty))
-        except (KeyError, ValueError):
+        except (TypeError, KeyError, ValueError):
             logger.exception('Bad Request')
             return jsonify('Bad Request'), 400
 

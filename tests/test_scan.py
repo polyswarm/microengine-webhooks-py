@@ -1,3 +1,4 @@
+import dataclasses
 import datetime
 
 from microenginewebhookspy.api import Bounty, Verdict, ScanResult
@@ -6,7 +7,7 @@ from microenginewebhookspy.scan import EICAR_STRING, scan
 
 def test_scan_malicious(requests_mock, mocker):
     # Setup mock assertion
-    spy = mocker.spy(Bounty, 'send_assertion')
+    spy = mocker.spy(Bounty, 'post_scan_result')
     artifact_url = 'mock://example.com/eicar'
     response_url = 'mock://example.com/response'
     eicar_sha356 = '275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f'
@@ -25,14 +26,14 @@ def test_scan_malicious(requests_mock, mocker):
                     rules=[]
                     )
 
-    scan(bounty)
+    scan(dataclasses.asdict(bounty))
     expected_result = ScanResult(Verdict.MALICIOUS, 1.0, {'malware_family': 'EICAR-TEST-FILE'})
     assert spy.mock_calls[0].args[1] == expected_result
 
 
 def test_scan_benign(requests_mock, mocker):
     # Setup mock assertion
-    spy = mocker.spy(Bounty, 'send_assertion')
+    spy = mocker.spy(Bounty, 'post_scan_result')
     artifact_url = 'mock://example.com/not-eicar'
     response_url = 'mock://example.com/response'
     eicar_sha356 = '09688de240a0b492aca7af12057b7f24cd5d0439f14d40b9eec1ce920bc82cb6'
@@ -51,7 +52,7 @@ def test_scan_benign(requests_mock, mocker):
                     rules=[]
                     )
 
-    scan(bounty)
+    scan(dataclasses.asdict(bounty))
     expected_result = ScanResult(Verdict.BENIGN, 1.0, {})
     assert spy.mock_calls[0].args[1] == expected_result
 
