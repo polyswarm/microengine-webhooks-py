@@ -18,7 +18,8 @@ class ValidateSenderMiddleware:
             signature = environ['HTTP_X_POLYSWARM_SIGNATURE']
         except KeyError:
             message = json.dumps({"X-POLYSWARM-SIGNATURE": "Signature not included in headers"}).encode('utf-8')
-            start_response("400 Bad Request", [('Content-Length', f'{len(message)}')])
+            start_response("400 Bad Request",
+                           [('Content-Length', f'{len(message)}'), ('Content-Type', 'application/json')])
             return [message]
 
         if self._valid_signature(wsgi_input, signature, API_KEY):
@@ -26,7 +27,8 @@ class ValidateSenderMiddleware:
             return self.app(environ, start_response)
         else:
             message = json.dumps({"X-POLYSWARM-SIGNATURE": "Signature does not match body"}).encode('utf-8')
-            start_response("401 Not Authorized", [('Content-Length', f'{len(message)}'), ('Content-Type', 'application/json')])
+            start_response("401 Not Authorized",
+                           [('Content-Length', f'{len(message)}'), ('Content-Type', 'application/json')])
             return [message]
 
     @staticmethod
