@@ -1,4 +1,5 @@
 import hmac
+import json
 import logging
 from io import BytesIO
 
@@ -16,15 +17,17 @@ class ValidateSenderMiddleware:
         try:
             signature = environ['HTTP_X_POLYSWARM_SIGNATURE']
         except KeyError:
-            start_response("400 Bad Request", [('Content-Length', '0')])
-            return []
+            message = json.dumps({"X-POLYSWARM-SIGNATURE": "Signature not included in headers"}).encode('utf-8')
+            start_response("400 Bad Request", [('Content-Length', f'{len(message)}')])
+            return [message]
 
         if self._valid_signature(wsgi_input, signature, API_KEY):
             environ['wsgi.input'] = BytesIO(wsgi_input)
             return self.app(environ, start_response)
         else:
-            start_response("401 Not Authorized", [('Content-Length', '0')])
-            return []
+            message = json.dumps({"X-POLYSWARM-SIGNATURE": "Signature does not match body"}).encode('utf-8')
+            start_response("401 Not Authorized", [('Content-Length', f'{len(message)}'), ('Content-Type', 'application/json')])
+            return [message]
 
     @staticmethod
     def _valid_signature(body, signature, api_key):
