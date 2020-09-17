@@ -17,7 +17,8 @@ setup(
     install_requires=[
         "celery",
         "Flask",
-        "requests"
+        "requests",
+        "python-json-logger"
     ],
     long_description=long_description,
     classifiers=[
