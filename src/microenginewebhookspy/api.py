@@ -53,7 +53,7 @@ class Bounty:
     response_url: str
     rules: List[str]
 
-    def download_artifact(self):
+    def fetch_artifact(self):
         session = requests.Session()
         with session.get(self.artifact_url) as response:
             response.raise_for_status()

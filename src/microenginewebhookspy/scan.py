@@ -19,7 +19,7 @@ def scan(bounty):
         scan_result = ScanResult(Verdict.UNKNOWN, 1.0, {})
         bounty.post_scan_result(scan_result)
 
-    content = bounty.download_artifact()
+    content = bounty.fetch_artifact()
     if content == EICAR_STRING:
         scan_result = ScanResult(Verdict.MALICIOUS, 1.0, {'malware_family': 'EICAR-TEST-FILE'})
     else:
