@@ -79,8 +79,12 @@ def bounty_request_handler():
             bounty = Bounty(**body)
             logger.debug('Kicking off new scan with %s', bounty)
             scan.delay(dataclasses.asdict(bounty))
+            return jsonify(''), 202
         except (TypeError, KeyError, ValueError):
             logger.exception('Bad Request')
-            return jsonify('Bad Request'), 400
+            return jsonify({'bounty': 'Invalid bounty request'}), 400
+    if event_name == 'ping':
+        return jsonify(''), 200
+    else:
+        return jsonify({'X-POLYSWARM-EVENT': f'Given event not supported'}), 400
 
-    return jsonify('OK'), 200
