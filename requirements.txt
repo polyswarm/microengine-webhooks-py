@@ -1,0 +1,7 @@
+celery==4.4.7
+Flask==1.1.2
+requests==2.24.0
+requests-mock==1.8.0
+pytest==6.0.2
+pytest-mock==3.3.1
+python-json-logger==0.1.11

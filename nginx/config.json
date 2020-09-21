@@ -1,0 +1,15 @@
+{
+    "listeners": {
+        "*:8080": {
+            "pass": "applications/microengine"
+        }
+    },
+
+    "applications": {
+        "microengine": {
+            "type": "python 3",
+            "path": "/usr/src/app",
+            "module": "microenginewebhookspy.wsgi"
+        }
+    }
+}

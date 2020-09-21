@@ -1,0 +1,49 @@
+version: '3.7'
+
+services:
+  rabbitmq:
+    image: rabbitmq
+    ports:
+      - "5672:5672"
+    networks:
+      - microengine-webhooks
+  celery:
+    build:
+      context: ../
+      dockerfile: docker/celery.Dockerfile
+    networks:
+      - microengine-webhooks
+    environment:
+      - PYTHONUNBUFFERED=1
+      - CELERY_BROKER=pyamqp://guest@rabbitmq//
+  integration:
+    build:
+      context: ../
+      dockerfile: docker/integration.Dockerfile
+    ports:
+      - "5000:5000"
+    networks:
+      - microengine-webhooks
+      - default
+    environment:
+      - PYTHONUNBUFFERED=1
+      - API_KEY=00000000000000000000000000000000
+      - WEBHOOK_URL=http://microengine-webhooks:8080/
+  microengine-webhooks:
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - microengine-webhooks
+    environment:
+      - PYTHONUNBUFFERED=1
+      - CELERY_BROKER=pyamqp://guest@rabbitmq//
+      - API_KEY=00000000000000000000000000000000
+      - LOG_LEVEL=DEBUG
+      - LOG_FORMAT=text
+
+networks:
+  microengine-webhooks:
+    driver: bridge
