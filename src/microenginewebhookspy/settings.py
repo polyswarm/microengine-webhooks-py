@@ -5,6 +5,7 @@ from pythonjsonlogger import jsonlogger
 
 BROKER = os.environ.get('CELERY_BROKER')
 API_KEY = os.environ.get('API_KEY')
+WEBHOOK_SECRET = os.environ.get('WEBHOOK_SECRET')
 
 
 class JSONFormatter(jsonlogger.JsonFormatter):
