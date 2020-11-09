@@ -8,7 +8,7 @@ except IOError:
 
 setup(
     name="microenginewebhookspy",
-    version="version='0.2.0'",
+    version="0.2.0",
     description="Exemplar microengine using webhooks for upcoming API changes",
     license="MIT",
     author="PolySwarm Developers",
