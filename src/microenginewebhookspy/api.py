@@ -6,6 +6,8 @@ import requests
 from flask import request, jsonify, Blueprint
 from typing import List, Dict, Any
 
+from microenginewebhookspy.settings import API_KEY
+
 POLYSWARM_EVENT_NAME_HEADER = 'X-POLYSWARM-EVENT'
 
 logger = logging.getLogger(__name__)
@@ -22,7 +24,7 @@ class Verdict(enum.Enum):
 @dataclasses.dataclass
 class ScanResult:
     verdict: dataclasses.InitVar[Verdict]
-    confidence: float
+    bid: int
     metadata: Dict[str, Any]
     verdict_str: str = dataclasses.field(init=False)
 
@@ -31,12 +33,12 @@ class ScanResult:
 
     def __eq__(self, other):
         return isinstance(other, ScanResult) and other.verdict_str == self.verdict_str \
-             and other.confidence == self.confidence and other.metadata == self.metadata
+             and other.bid == self.bid and other.metadata == self.metadata
 
     def __hash__(self):
         calculated_hash = 7
         calculated_hash = 53 * calculated_hash + hash(self.verdict_str)
-        calculated_hash = 53 * calculated_hash + hash(self.confidence)
+        calculated_hash = 53 * calculated_hash + hash(self.bid)
         # Cannot hash a dict
         return calculated_hash
 
@@ -61,7 +63,10 @@ class Bounty:
 
     def post_scan_result(self, scan_result: ScanResult):
         session = requests.Session()
-        with session.post(self.response_url, json=dataclasses.asdict(scan_result)) as response:
+        headers = {
+            'Authorization': API_KEY
+        }
+        with session.post(self.response_url, headers=headers, json=dataclasses.asdict(scan_result)) as response:
             response.raise_for_status()
 
     def __dict__(self):
