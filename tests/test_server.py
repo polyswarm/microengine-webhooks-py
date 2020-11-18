@@ -40,7 +40,7 @@ def test_valid_bounty_to_api(requests_mock):
     headers = {'X-POLYSWARM-EVENT': 'bounty'}
     response = client.post('/', headers=headers, json=dataclasses.asdict(bounty))
 
-    assert response.status_code == 200
+    assert response.status_code == 202
 
 
 def test_invalid_bounty_to_api():
