@@ -1,3 +1,3 @@
 celery: celery -A microenginewebhookspy.scan worker
 integration: python -m flask run --host 0.0.0.0
-test=pip3 install --user --no-cache-dir -U -r requirements-test.txt && pytest --cov --cov-report=term-missing --cov-report=html --no-cov-on-fail --log-cli-level=DEBUG
+test: pip install --user --no-cache-dir -U -r requirements-test.txt && pytest --cov --cov-report=term-missing --cov-report=html --no-cov-on-fail --log-cli-level=DEBUG
