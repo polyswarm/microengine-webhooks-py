@@ -83,7 +83,7 @@ test:
 e2e:
   stage: e2e
   tags:
-    - kube-small
+    - kube
   script:
     - e2e run
 
