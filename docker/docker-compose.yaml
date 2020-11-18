@@ -10,7 +10,8 @@ services:
   celery:
     build:
       context: ../
-      dockerfile: worker.Dockerfile
+      dockerfile: docker/worker.Dockerfile
+      dockerfile: docker/python.Dockerfile
     networks:
       - microengine-webhooks
     environment:
@@ -20,7 +21,7 @@ services:
   integration:
     build:
       context: ../
-      dockerfile: worker.Dockerfile
+      dockerfile: docker/worker.Dockerfile
     ports:
       - "5000:5000"
     networks:
