@@ -2,6 +2,7 @@ import dataclasses
 import datetime
 
 from microenginewebhookspy.api import Bounty, Verdict, ScanResult
+from microenginewebhookspy.utils import to_wei
 from microenginewebhookspy.scan import EICAR_STRING, scan
 
 
@@ -27,8 +28,8 @@ def test_scan_malicious(requests_mock, mocker):
                     )
 
     scan(dataclasses.asdict(bounty))
-    expected_result = ScanResult(Verdict.MALICIOUS, 1.0, {'malware_family': 'EICAR-TEST-FILE'})
-    assert spy.mock_calls[0].args[1] == expected_result
+    expected_result = ScanResult(Verdict.MALICIOUS, to_wei(1), {'malware_family': 'EICAR-TEST-FILE'})
+    spy.assert_called_once_with(bounty, expected_result)
 
 
 def test_scan_benign(requests_mock, mocker):
@@ -53,10 +54,10 @@ def test_scan_benign(requests_mock, mocker):
                     )
 
     scan(dataclasses.asdict(bounty))
-    expected_result = ScanResult(Verdict.BENIGN, 1.0, {})
-    assert spy.mock_calls[0].args[1] == expected_result
+    expected_result = ScanResult(Verdict.BENIGN, to_wei(1), {})
+    spy.assert_called_once_with(bounty, expected_result)
 
 
 def test_scan_result_equal():
-    assert ScanResult(Verdict.BENIGN, 1.0, {}) == ScanResult(Verdict.BENIGN, 1.0, {})
-    assert ScanResult(Verdict.BENIGN, 1.0, {}) != ScanResult(Verdict.BENIGN, .04, {})
+    assert ScanResult(Verdict.BENIGN, 10000000000000000, {}) == ScanResult(Verdict.BENIGN, 10000000000000000, {})
+    assert ScanResult(Verdict.BENIGN, 10000000000000000, {}) != ScanResult(Verdict.BENIGN, 6250000000000, {})
