@@ -10,16 +10,17 @@ services:
   celery:
     build:
       context: ../
-      dockerfile: docker/celery.Dockerfile
+      dockerfile: docker/python.Dockerfile
     networks:
       - microengine-webhooks
     environment:
       - PYTHONUNBUFFERED=1
-      - CELERY_BROKER=pyamqp://guest@rabbitmq//
+      - CELERY_BROKER_URL=pyamqp://guest@rabbitmq//
+      - PROCESS_TYPE=celery
   integration:
     build:
       context: ../
-      dockerfile: docker/integration.Dockerfile
+      dockerfile: docker/python.Dockerfile
     ports:
       - "5000:5000"
     networks:
@@ -27,8 +28,9 @@ services:
       - default
     environment:
       - PYTHONUNBUFFERED=1
-      - API_KEY=00000000000000000000000000000000
+      - WEBHOOK_SECRET=qwertyuiop
       - WEBHOOK_URL=http://microengine-webhooks:8080/
+      - PROCESS_TYPE=integration
   microengine-webhooks:
     build:
       context: ../
@@ -41,6 +43,7 @@ services:
       - PYTHONUNBUFFERED=1
       - CELERY_BROKER=pyamqp://guest@rabbitmq//
       - API_KEY=00000000000000000000000000000000
+      - WEBHOOK_SECRET=qwertyuiop
       - LOG_LEVEL=DEBUG
       - LOG_FORMAT=text
 
