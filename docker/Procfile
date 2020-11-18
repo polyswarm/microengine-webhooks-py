@@ -1,0 +1,2 @@
+celery: celery -A microenginewebhookspy.scan worker
+integration: python -m flask run --host 0.0.0.0
