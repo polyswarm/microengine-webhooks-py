@@ -73,8 +73,6 @@ nginx:
     tag: "latest"
 
   imagePullSecrets: []
-  nameOverride: ""
-  fullnameOverride: ""
 
   serviceAccount:
     # Specifies whether a service account should be created
