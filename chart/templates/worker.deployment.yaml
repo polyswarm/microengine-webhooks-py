@@ -5,37 +5,35 @@ metadata:
   labels:
     {{- include "microengine-webhooks-py.labels" . | nindent 4 }}
 spec:
-{{- if not .Values.nginx.autoscaling.enabled }}
-  replicas: {{ .Values.nginx.replicaCount }}
+{{- if not .Values.worker.autoscaling.enabled }}
+  replicas: {{ .Values.worker.replicaCount }}
 {{- end }}
   selector:
     matchLabels:
       {{- include "microengine-webhooks-py.selectorLabels" . | nindent 6 }}
   template:
     metadata:
-    {{- with .Values.nginx.podAnnotations }}
+    {{- with .Values.worker.podAnnotations }}
       annotations:
         {{- toYaml . | nindent 8 }}
     {{- end }}
       labels:
         {{- include "microengine-webhooks-py.selectorLabels" . | nindent 8 }}
     spec:
-      {{- with .Values.nginx.imagePullSecrets }}
+      {{- with .Values.worker.imagePullSecrets }}
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       serviceAccountName: {{ include "microengine-webhooks-py.serviceAccountName" . }}
       securityContext:
-        {{- toYaml .Values.nginx.podSecurityContext | nindent 8 }}
+        {{- toYaml .Values.worker.podSecurityContext | nindent 8 }}
       containers:
         - name: {{ .Chart.Name }}
           securityContext:
-            {{- toYaml .Values.nginx.securityContext | nindent 12 }}
-          image: "{{ .Values.nginx.image.repository }}:{{ .Values.nginx.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.nginx.image.pullPolicy }}
+            {{- toYaml .Values.worker.securityContext | nindent 12 }}
+          image: "{{ .Values.worker.image.repository }}:{{ .Values.worker.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.worker.image.pullPolicy }}
           env:
-          - name: PYTHONUNBUFFERED
-            value: 1
           - name: CELERY_BROKER_URL
             valueFrom:
               secretKeyRef:
@@ -52,9 +50,11 @@ spec:
                 name: {{ template "microengine-webhooks-py.fullname" . }}
                 key: WEBHOOK_SECRET
           - name: LOG_LEVEL
-            value: {{ .Values.nginx.logLevel }}
+            value: {{ .Values.worker.logLevel }}
           - name: LOG_FORMAT
-            value: {{ .Values.nginx.logFormat }}
+            value: {{ .Values.worker.logFormat }}
+          - name: PROCESS_TYPE
+            value: {{ .Values.worker.processType }}
           ports:
             - name: http
               containerPort: 80
@@ -68,16 +68,16 @@ spec:
               path: /
               port: http
           resources:
-            {{- toYaml .Values.nginx.resources | nindent 12 }}
-      {{- with .Values.nginx.nodeSelector }}
+            {{- toYaml .Values.worker.resources | nindent 12 }}
+      {{- with .Values.worker.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.nginx.affinity }}
+      {{- with .Values.worker.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      {{- with .Values.nginx.tolerations }}
+      {{- with .Values.worker.tolerations }}
       tolerations:
         {{- toYaml . | nindent 8 }}
       {{- end }}
