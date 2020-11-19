@@ -57,7 +57,7 @@ spec:
             value: {{ .Values.nginx.logFormat }}
           ports:
             - name: http
-              containerPort: 80
+              containerPort: {{ .Values.nginx.port }}
               protocol: TCP
           livenessProbe:
             httpGet:

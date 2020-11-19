@@ -13,7 +13,7 @@ worker:
   replicaCount: 1
 
   image:
-    repository: nginx
+    repository: polyswarm/microengine-webhooks-py-worker
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     tag: "latest"
@@ -62,11 +62,12 @@ worker:
 nginx:
   logLevel: "warning"
   logFormat: "json"
+  port: 8080
 
   replicaCount: 1
 
   image:
-    repository: nginx
+    repository: polyswarm/microengine-webhooks-py
     pullPolicy: IfNotPresent
     # Overrides the image tag whose default is the chart appVersion.
     tag: "latest"
