@@ -24,7 +24,7 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "microengine-webhooks-py.serviceAccountName" . }}
+      serviceAccountName: {{ include "microengine-webhooks-py.nginx.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.nginx.podSecurityContext | nindent 8 }}
       containers:

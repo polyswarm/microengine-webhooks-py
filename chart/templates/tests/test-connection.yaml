@@ -11,5 +11,5 @@ spec:
     - name: wget
       image: busybox
       command: ['wget']
-      args: ['{{ include "microengine-webhooks-py.fullname" . }}:{{ .Values.service.port }}']
+      args: ['{{ include "microengine-webhooks-py.fullname" . }}:{{ .Values.nginx.service.port }}']
   restartPolicy: Never

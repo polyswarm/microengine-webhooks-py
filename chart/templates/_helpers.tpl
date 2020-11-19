@@ -53,10 +53,22 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{/*
 Create the name of the service account to use
 */}}
-{{- define "microengine-webhooks-py.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create }}
-{{- default (include "microengine-webhooks-py.fullname" .) .Values.serviceAccount.name }}
+{{- define "microengine-webhooks-py.nginx.serviceAccountName" -}}
+{{- if .Values.nginx.serviceAccount.create }}
+{{- default (include "microengine-webhooks-py.fullname" .) .Values.nginx.serviceAccount.name }}
 {{- else }}
-{{- default "default" .Values.serviceAccount.name }}
+{{- default "default" .Values.nginx.serviceAccount.name }}
+{{- end }}
+{{- end }}
+
+
+{{/*
+Create the name of the service account to use
+*/}}
+{{- define "microengine-webhooks-py.worker.serviceAccountName" -}}
+{{- if .Values.worker.serviceAccount.create }}
+{{- default (include "microengine-webhooks-py.fullname" .) .Values.worker.serviceAccount.name }}
+{{- else }}
+{{- default "default" .Values.worker.serviceAccount.name }}
 {{- end }}
 {{- end }}
