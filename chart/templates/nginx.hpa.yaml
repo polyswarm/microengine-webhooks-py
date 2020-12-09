@@ -1,0 +1,28 @@
+{{- if .Values.nginx.autoscaling.enabled }}
+apiVersion: autoscaling/v2beta1
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "microengine-webhooks-py.fullname" . }}
+  labels:
+    {{- include "microengine-webhooks-py.labels" . | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "microengine-webhooks-py.fullname" . }}
+  minReplicas: {{ .Values.nginx.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.nginx.autoscaling.maxReplicas }}
+  metrics:
+  {{- if .Values.nginx.autoscaling.targetCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: cpu
+        targetAverageUtilization: {{ .Values.nginx.autoscaling.targetCPUUtilizationPercentage }}
+  {{- end }}
+  {{- if .Values.nginx.autoscaling.targetMemoryUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: memory
+        targetAverageUtilization: {{ .Values.nginx.autoscaling.targetMemoryUtilizationPercentage }}
+  {{- end }}
+{{- end }}

@@ -3,7 +3,7 @@ import os
 from datetime import datetime
 from pythonjsonlogger import jsonlogger
 
-BROKER = os.environ.get('CELERY_BROKER')
+BROKER = os.environ.get('CELERY_BROKER_URL')
 API_KEY = os.environ.get('API_KEY')
 WEBHOOK_SECRET = os.environ.get('WEBHOOK_SECRET')
 
