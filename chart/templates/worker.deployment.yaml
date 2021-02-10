@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "microengine-webhooks-py.fullname" . }}
+  name: {{ include "microengine-webhooks-py.fullname" . }}-worker
   labels:
     {{- include "microengine-webhooks-py.labels" . | nindent 4 }}
 spec:
@@ -24,7 +24,7 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "microengine-webhooks-py.worker.serviceAccountName" . }}
+      serviceAccountName: {{ include "microengine-webhooks-py.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.worker.podSecurityContext | nindent 8 }}
       containers:
@@ -55,18 +55,6 @@ spec:
             value: {{ .Values.worker.logFormat }}
           - name: PROCESS_TYPE
             value: {{ .Values.worker.processType }}
-          ports:
-            - name: http
-              containerPort: 80
-              protocol: TCP
-          livenessProbe:
-            httpGet:
-              path: /
-              port: http
-          readinessProbe:
-            httpGet:
-              path: /
-              port: http
           resources:
             {{- toYaml .Values.worker.resources | nindent 12 }}
       {{- with .Values.worker.nodeSelector }}

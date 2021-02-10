@@ -1,4 +1,4 @@
-RELEASE_NAME=eicar
+RELEASE_NAME=microengine-webhooks-py
 CHARTS_DIR=../../.
 YAML_FILES=$(CHARTS_DIR)/values.yaml $(CHARTS_DIR)/secrets.yaml secrets.yaml values.yaml
 HELM_VERSION=helm3
