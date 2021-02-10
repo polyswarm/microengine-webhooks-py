@@ -8,11 +8,17 @@ from microenginewebhookspy.settings import WEBHOOK_SECRET
 logger = logging.getLogger(__name__)
 
 
+REQUEST_METHOD_WHITELIST = ['GET']
+
+
 class ValidateSenderMiddleware:
     def __init__(self, app):
         self.app = app
 
     def __call__(self, environ, start_response):
+        if environ['REQUEST_METHOD'] in REQUEST_METHOD_WHITELIST:
+            return self.app(environ, start_response)
+
         wsgi_input = environ['wsgi.input'].read()
         try:
             signature = environ['HTTP_X_POLYSWARM_SIGNATURE']
