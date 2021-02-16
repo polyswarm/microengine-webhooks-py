@@ -3,9 +3,13 @@ import os
 from datetime import datetime
 from pythonjsonlogger import jsonlogger
 
+from microenginewebhookspy.utils import to_wei
+
 BROKER = os.environ.get('CELERY_BROKER_URL')
 API_KEY = os.environ.get('API_KEY')
 WEBHOOK_SECRET = os.environ.get('WEBHOOK_SECRET')
+DEFAULT_MAX_BID = os.environ.get('DEFAULT_MAX_BID', to_wei(1))
+DEFAULT_MIN_BID = os.environ.get('DEFAULT_MIN_BID', to_wei(1) / 16)
 
 
 class JSONFormatter(jsonlogger.JsonFormatter):

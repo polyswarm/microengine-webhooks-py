@@ -1,29 +1,33 @@
-import base64
-
-from celery import Celery
-
-from microenginewebhookspy.api import Bounty, ScanResult, Verdict
-from microenginewebhookspy.settings import BROKER
+from microenginewebhookspy.models import Bounty, ScanResult, Assertion, Verdict
 from microenginewebhookspy.utils import to_wei
+from microenginewebhookspy import settings
 
-celery_app = Celery('tasks', broker=BROKER)
+from polyswarmartifact.schema import Verdict as Metadata
+from polyswarmartifact.artifact_type import ArtifactType
+
+
 
 EICAR_STRING = base64.b64decode(
     b'WDVPIVAlQEFQWzRcUFpYNTQoUF4pN0NDKTd9JEVJQ0FSLVNUQU5EQVJELUFOVElWSVJVUy1URVNULUZJTEUhJEgrSCo='
 )
 
 
-@celery_app.task
-def scan(bounty):
-    bounty = Bounty(**bounty)
-    if bounty.artifact_type.lower() != 'file':
-        scan_result = ScanResult(Verdict.UNKNOWN, to_wei(1), {})
+def scan(bounty: Bounty) -> ScanResult:
+    metadata = Metadata()
+    metadata.malware_family = ''
+    if bounty.artifact_type.lower() != ArtifactType.FILE.value:
+        scan_result = ScanResult(verdict=Verdict.UNKNOWN, confidence=0, metadata=metadata)
         bounty.post_scan_result(scan_result)
 
     content = bounty.fetch_artifact()
     if content == EICAR_STRING:
-        scan_result = ScanResult(Verdict.MALICIOUS, to_wei(1), {'malware_family': 'EICAR-TEST-FILE'})
+        metadata.malware_family = 'EICAR-TEST-FILE'
+        scan_result = ScanResult(verdict=Verdict.MALICIOUS, confidence=1, metadata=metadata)
     else:
-        scan_result = ScanResult(Verdict.BENIGN, to_wei(1), {})
+        scan_result = ScanResult(verdict=Verdict.BENIGN, confidence=1, metadata=metadata)
 
-    bounty.post_scan_result(scan_result)
+
+def bid(max_bid, min_bid, bounty: Bounty, scan_result: ScanResult) -> int:
+    bid = min_bid + max(confidence * (max_bid - min_bid), 0)
+    bid = min(bid, max_bid)
+    return bid
