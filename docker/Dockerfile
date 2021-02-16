@@ -1,7 +1,7 @@
 FROM nginx/unit:1.19.0-python3.7
 
 COPY nginx/*.json /docker-entrypoint.d/
-#COPY ./nginx/*.pen /docker-entrypoint.d/
+#COPY ./nginx/*.pem /docker-entrypoint.d/
 #COPY ./nginx/*.sh /docker-entrypoint.d/
 
 WORKDIR /usr/src/app
