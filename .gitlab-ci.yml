@@ -11,12 +11,16 @@ stages:
   - deployment
 
 variables:
-  DOCKER_HOST: tcp://localhost:2375/
+  DOCKER_HOST: tcp://localhost:2376/
+  DOCKER_TLS_CERTDIR: "/certs"
+  DOCKER_TLS_VERIFY: 1
+  DOCKER_CERT_PATH: "$DOCKER_TLS_CERTDIR/client"
   BASE_IMAGE_NAME: microengine-webhooks-py
   WORKER_SUFFIX: worker
 
 default:
   before_script:
+    - sleep 2
     - pip install -q $END_TO_END_LIB@$CI_COMMIT_REF_NAME || pip install -q $END_TO_END_LIB
     - e2e init
 
@@ -27,7 +31,7 @@ default:
 build-nginx:
   stage: build
   tags:
-    - kube-small
+    - kube-small-new
   script:
     - e2e dependencies docker/Dockerfile $BASE_IMAGE_NAME
     # explicitly pull the latest version of the dependant image
@@ -46,7 +50,7 @@ build-nginx:
 build-worker:
   stage: build
   tags:
-    - kube-small
+    - kube-small-new
   script:
     - e2e dependencies docker/Dockerfile $BASE_IMAGE_NAME-$WORKER_SUFFIX
     - sed "s#FROM python#FROM $REPO_URL/python#" docker/worker.Dockerfile > docker/worker.Dockerfile.ci
@@ -69,7 +73,7 @@ build-worker:
 test:
   stage: test
   tags:
-    - kube-small
+    - kube-small-new
   coverage: '/TOTAL.*\s+(\d+%)$/'
   script:
     - docker network create microengine-webhooks-py
@@ -85,7 +89,7 @@ test:
 e2e:
   stage: e2e
   tags:
-    - kube
+    - kube-new
   script:
     - e2e run
 
@@ -96,7 +100,7 @@ e2e:
 release:
   stage: release
   tags:
-    - kube-small
+    - kube-small-new
   script:
     - docker pull $REPO_URL/$BASE_IMAGE_NAME:$CI_COMMIT_SHA
     - docker tag $REPO_URL/$BASE_IMAGE_NAME:$CI_COMMIT_SHA $REPO_URL/$BASE_IMAGE_NAME:latest
@@ -107,7 +111,7 @@ release:
 release-worker:
   stage: release
   tags:
-    - kube-small
+    - kube-small-new
   script:
     - docker pull $REPO_URL/$BASE_IMAGE_NAME-$WORKER_SUFFIX:$CI_COMMIT_SHA
     - docker tag $REPO_URL/$BASE_IMAGE_NAME-$WORKER_SUFFIX:$CI_COMMIT_SHA $REPO_URL/$BASE_IMAGE_NAME-$WORKER_SUFFIX:latest

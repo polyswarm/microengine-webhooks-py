@@ -8,7 +8,7 @@ apiVersion: extensions/v1beta1
 {{- end }}
 kind: Ingress
 metadata:
-  name: {{ $fullName }}
+  name: {{ $fullName }}-nginx
   labels:
     {{- include "microengine-webhooks-py.labels" . | nindent 4 }}
   {{- with .Values.nginx.ingress.annotations }}

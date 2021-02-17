@@ -23,12 +23,16 @@ def bounty_request_handler():
             bounty = Bounty(**body)
             logger.debug('Kicking off new scan with %s', bounty)
             handle_bounty.delay(dataclasses.asdict(bounty))
-            return jsonify(''), 202
+            return jsonify({'status': 'ACCEPTED'}), 202
         except (TypeError, KeyError, ValueError):
             logger.exception('Bad Request')
             return jsonify({'bounty': 'Invalid bounty request'}), 400
     if event_name == 'ping':
-        return jsonify(''), 200
+        return jsonify({'status': 'OK'}), 200
     else:
         return jsonify({'X-POLYSWARM-EVENT': f'Given event not supported'}), 400
 
+
+@api.route('/', methods=['GET'])
+def liveness_request_handler():
+    return jsonify({'status': 'OK'}), 200

@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "microengine-webhooks-py.fullname" . }}
+  name: {{ include "microengine-webhooks-py.fullname" . }}-nginx
   labels:
     {{- include "microengine-webhooks-py.labels" . | nindent 4 }}
 spec:
@@ -24,7 +24,7 @@ spec:
       imagePullSecrets:
         {{- toYaml . | nindent 8 }}
       {{- end }}
-      serviceAccountName: {{ include "microengine-webhooks-py.nginx.serviceAccountName" . }}
+      serviceAccountName: {{ include "microengine-webhooks-py.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.nginx.podSecurityContext | nindent 8 }}
       containers:
@@ -35,7 +35,7 @@ spec:
           imagePullPolicy: {{ .Values.nginx.image.pullPolicy }}
           env:
           - name: PYTHONUNBUFFERED
-            value: 1
+            value: "1"
           - name: CELERY_BROKER_URL
             valueFrom:
               secretKeyRef:
