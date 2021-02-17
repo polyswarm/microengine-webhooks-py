@@ -8,6 +8,9 @@ from microenginewebhookspy.utils import to_wei
 BROKER = os.environ.get('CELERY_BROKER_URL')
 API_KEY = os.environ.get('API_KEY')
 WEBHOOK_SECRET = os.environ.get('WEBHOOK_SECRET')
+
+MAX_BID_RULE_NAME = os.environ.get('MAX_BID_RULE_NAME', 'max_allowed_bid')
+MIN_BID_RULE_NAME = os.environ.get('MIN_BID_RULE_NAME', 'min_allowed_bid')
 DEFAULT_MAX_BID = os.environ.get('DEFAULT_MAX_BID', to_wei(1))
 DEFAULT_MIN_BID = os.environ.get('DEFAULT_MIN_BID', to_wei(1) / 16)
 

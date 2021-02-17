@@ -1,10 +1,7 @@
 import dataclasses
-import enum
 import logging
-import requests
 
 from flask import request, jsonify, Blueprint
-from typing import List, Dict, Any
 
 from microenginewebhookspy.models import Bounty
 

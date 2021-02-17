@@ -1,4 +1,9 @@
-from polyswarmartifact.schema import Verdict as Metadata
+import dataclasses
+import enum
+import requests
+
+from typing import List, Dict, Any, Optional
+from polyswarmartifact.schema import Verdict as AssertionMetadata
 
 from microenginewebhookspy.settings import API_KEY
 
@@ -11,28 +16,29 @@ class Verdict(enum.Enum):
 
 @dataclasses.dataclass
 class ScanResult:
-    verdict: dataclasses.InitVar[Verdict]
-    metadata: Metadata
-    confidence: float = dataclasses.field()
+    verdict: Verdict
+    metadata: AssertionMetadata
+    confidence: float = dataclasses.field(default=1)
 
 
 @dataclasses.dataclass
 class Assertion:
-    verdict: dataclasses.InitVar[Verdict]
-    bid: int
-    metadata: Metadata
-    verdict_str: str = dataclasses.field(init=False)
+    verdict: str
+    bid: Optional[int]
+    metadata: Dict
 
-    def __post_init__(self, verdict):
-        self.verdict_str = verdict.value
+
+    @classmethod
+    def from_scan_result(cls, scan_result: ScanResult, bid: int=0):
+        return cls(scan_result.verdict.value, bid, scan_result.metadata.dict())
 
     def __eq__(self, other):
-        return isinstance(other, Assertion) and other.verdict_str == self.verdict_str \
+        return isinstance(other, Assertion) and other.verdict == self.verdict\
              and other.bid == self.bid and other.metadata == self.metadata
 
     def __hash__(self):
         calculated_hash = 7
-        calculated_hash = 53 * calculated_hash + hash(self.verdict_str)
+        calculated_hash = 53 * calculated_hash + hash(self.verdict)
         calculated_hash = 53 * calculated_hash + hash(self.bid)
         # Cannot hash a dict
         return calculated_hash
@@ -48,7 +54,7 @@ class Bounty:
     expiration: str
     phase: str
     response_url: str
-    rules: Dict[Tuple[str, Any]]
+    rules: Dict[str, Any]
 
     def fetch_artifact(self):
         session = requests.Session()
