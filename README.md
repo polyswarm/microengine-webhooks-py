@@ -275,5 +275,5 @@ The included Chart and Dockerfiles make it easy to deploy to kubernetes.
 1. Run/Use a Celery Broker
 1. Fill in a RELEASE_NAME in Makefile
 1. Change HELM_VERSIOn to the name of your helm 3 binary
-1. Fill in values and secrets in `chart/env/`
+1. Fill in values and secrets in `chart/env/default`
 1. `make install`
