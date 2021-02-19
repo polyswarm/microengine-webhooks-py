@@ -4,7 +4,7 @@ from microenginewebhookspy.models import Bounty, ScanResult, Assertion, Verdict
 from microenginewebhookspy.utils import to_wei
 from microenginewebhookspy import settings
 
-from polyswarmartifact.schema import Verdict as AssertionMetadata
+from polyswarmartifact.schema import Verdict as ScanMetadata
 from polyswarmartifact.artifact_type import ArtifactType
 
 
@@ -15,7 +15,7 @@ EICAR_STRING = base64.b64decode(
 
 
 def scan(bounty: Bounty) -> ScanResult:
-    metadata = AssertionMetadata()
+    metadata = ScanMetadata()
     metadata.malware_family = ''
     if ArtifactType.from_string(bounty.artifact_type.lower()) != ArtifactType.FILE:
         return ScanResult(verdict=Verdict.UNKNOWN, confidence=0, metadata=metadata)

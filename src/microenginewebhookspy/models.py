@@ -3,7 +3,7 @@ import enum
 import requests
 
 from typing import List, Dict, Any, Optional
-from polyswarmartifact.schema import Verdict as AssertionMetadata
+from polyswarmartifact.schema import Verdict as ScanMetadata
 
 from microenginewebhookspy.settings import API_KEY
 
@@ -13,24 +13,11 @@ class Verdict(enum.Enum):
     SUSPICIOUS = 'suspicious'
     UNKNOWN = 'unknown'
 
-
-@dataclasses.dataclass
-class ScanResult:
-    verdict: Verdict
-    metadata: AssertionMetadata
-    confidence: float = dataclasses.field(default=1)
-
-
 @dataclasses.dataclass
 class Assertion:
     verdict: str
     bid: Optional[int]
     metadata: Dict
-
-
-    @classmethod
-    def from_scan_result(cls, scan_result: ScanResult, bid: int=0):
-        return cls(scan_result.verdict.value, bid, scan_result.metadata.dict())
 
     def __eq__(self, other):
         return isinstance(other, Assertion) and other.verdict == self.verdict\
@@ -42,6 +29,16 @@ class Assertion:
         calculated_hash = 53 * calculated_hash + hash(self.bid)
         # Cannot hash a dict
         return calculated_hash
+
+
+@dataclasses.dataclass
+class ScanResult:
+    verdict: Verdict
+    metadata: ScanMetadata
+    confidence: float = dataclasses.field(default=1)
+
+    def to_assertion(self, bid: int = 0):
+        return Assertion(self.verdict.value, bid, self.metadata.dict())
 
 
 @dataclasses.dataclass(frozen=True)

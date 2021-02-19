@@ -19,4 +19,4 @@ def handle_bounty(bounty):
     if scan_result.verdict == Verdict.MALICIOUS or scan_result.verdict == Verdict.BENIGN:
         bid = compute_bid(bounty, scan_result)
 
-    bounty.post_assertion(Assertion.from_scan_result(scan_result, bid))
+    bounty.post_assertion(scan_result.to_assertion(bid))
