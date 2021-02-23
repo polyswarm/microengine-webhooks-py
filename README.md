@@ -3,25 +3,25 @@
 PolySwarm is changing from a websocket based bounty delivery to webhooks.
 Webhooks reduce wasted bandwidth by sending only relevant bounty events to each engine.
 
-This project has a simple webhook microengines that can be used as a base to build more complicated microengines.
-Users should be able to hit the ground running and edit only one file with two functions to get started.
+This project has a simple webhook microengine that can be used as a base to build more complicated microengines.
+Users should be able to quickly get running by editing only one file with two functions to get started.
 
 ## How it works
 
 PolySwarm will send events as HTTP POST requests to the webhook.
 Microengines need only to listen passively until a new event arrives.
 
-Nginx Unit acts the base web server to receive http requests.
+Nginx Unit acts as the base web server to receive HTTP requests.
 A python Flask application runs with Unit to handle the requests.
 The event requests are all parsed, and handled in python code.
 
 Each event request includes three special headers; `X-POLYSWARM-EVENT`, `X-POLYSWARM-SIGNATURE`, and `X-POLYSWARM-DELIVERY`.
 
 `X-POLYSWARM-SIGNATURE` is read by `ValidateSenderMiddleware` in `middleware.py`.
-The signature is an hmac of the request body, signed by the shared secret that is generated during registration.
+The signature is an HMAC of the request body, signed by the shared secret that is generated during engine registration.
 This process prevents other parties from sending bounties and stealing scans.
 
-`X-POLYSWARM-EVENT` is read in the request handler to determine what feature the event triggers.
+`X-POLYSWARM-EVENT` is read in the request handler to determine which feature the event triggers.
 For example, a Microengine will check for `ping`, or `bounty`.
 Ping tests that the Webhook server is up.
 Bounty scans an artifact.
@@ -58,15 +58,15 @@ The `Assertion` is sent back at `bounty.response_url`.
 
 ## Customizing a microengine
 
-Customizing your engine is as simple as overwriting just 1-2 functions.
+Customizing your engine is as simple as overriding just 1-2 functions.
 Inside `scan.py` there are two functions, `scan` and `compute_bid`.
 These functions are called in synchronous code.
 
 
-To get started, clone, fork, or download this project, and move to the Overwriting Scan section.
+To get started, clone, fork, or download this project, and move to the Overriding Scan section.
 
 
-### Overwriting Scan
+### Overriding Scan
 
 The scan function is the core of any microengine.
 It takes in a `Bounty` for some artifact, and returns a `ScanResult`.
@@ -75,8 +75,8 @@ The signature for scan is as follows.
 
 `def scan(bounty: Bounty) -> ScanResult:`.
 
-The example code is a simple eicar scanner.
-It checks that the bounty contains a file, and compares the contents against the eicar string.c
+The example code is a simple EICAR scanner.
+It checks that the bounty contains a file, and compares the contents against the EICAR string.
 `polyswarm-artifact` is used to simplify metadata generation, and file comparison.
 
 More complex engines use `subprocess` to execute some software for scanning, or send the file to another service for scanning.
@@ -161,7 +161,7 @@ class ScanResult:
 
 
 In the latest iteration of the marketplace, more verdict options have been added.
-Microengines can now assert with Suspicious, or Unknown verdicts.
+Microengines can now assert with Suspicious, or Unknown verdicts, in addition to the original Malicious and Benign verdicts.
 
 Unknown indicates that the engine is working, but doesn't have enough information to make an assertion.
 That could be the file isn't supported, it's taking to long to scan, or the engine just didn't want to scan it.
@@ -173,7 +173,7 @@ Suspicious is a new response that gives new information about an artifact.
 It's ideal for situations where confidence is low, and an engine does not want to report false negatives, nor positives.
 
 
-### Overwriting Bid
+### Overriding Bid
 
 
 By default, `compute_bid` uses the confidence, treated as a percentage, to put the bid on a range from min to max.
@@ -200,7 +200,7 @@ def compute_bid(bounty: Bounty, scan_result: ScanResult) -> int:
 Everything in this project is customizable.
 This marks a change from polyswarm-client, where developers just created a module to run inside polyswarm-client.
 
-For example, a developers may want to do any of the following.
+For example, developers may want to do any of the following.
 
 * Change the `metadata` field in `ScanResult` to use a `Dict` instead of polyswarm-artifact (Will require a change in `ScanResult.to_assertion` as well).
 * Add more fields in `ScanResult` that `compute_bid` uses to generate a bid.
@@ -240,20 +240,9 @@ Run the docker-compose file with `docker-compose -f docker/docker-compose up`.
 To trigger integration tests, send POST requests to `http://localhost:5000/`.
 There are several test routes that trigger webhooks to the microengine for testing.
 
-* `/test/bounty/` Sends either an malicious (eicar) or benign bounty to scan. Integration test will print received assertion.
+* `/test/bounty/` Sends either an malicious (EICAR) or benign bounty to scan. Integration test will print received assertion.
 * `/test/ping` Sends a ping event.
-* `/test/anayze` Sends an analyze event, for testing an event type microengines won't respond to.
-
-
-## Registering the Engine
-
-1. Go to `https://polyswarm.network`.
-1. Log in or create an account.
-1. Navigate to webhooks.
-1. Register the webhook.
-1. Run the webhook test.
-1. Register the engine.
-1. Assign the new webhook to the engine.
+* `/test/analyze` Sends an analyze event, for testing an event type microengines won't respond to.
 
 
 ## Deploying to kubernetes
