@@ -7,9 +7,6 @@ from microenginewebhookspy.scan import scan, compute_bid
 celery_app = Celery('tasks', broker=settings.BROKER)
 
 
-
-
-
 @celery_app.task
 def handle_bounty(bounty):
     bounty = Bounty(**bounty)
