@@ -3,7 +3,7 @@ from logging.config import dictConfig
 from microenginewebhookspy import settings
 
 from microenginewebhookspy.middleware import ValidateSenderMiddleware
-from microenginewebhookspy.api import api
+from microenginewebhookspy.views import api
 
 dictConfig(settings.LOGGING)
 

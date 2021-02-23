@@ -2,9 +2,9 @@ import dataclasses
 import datetime
 import pytest
 
-import microenginewebhookspy.scan
+import microenginewebhookspy.tasks
 
-from microenginewebhookspy.api import Bounty
+from microenginewebhookspy.views import Bounty
 from microenginewebhookspy.scan import EICAR_STRING
 from microenginewebhookspy.wsgi import app
 
@@ -15,7 +15,7 @@ def replace_scan(celery_app):
     def scan(bounty: Bounty):
         pass
 
-    microenginewebhookspy.scan.scan = scan
+    microenginewebhookspy.tasks.handle_bounty = scan
 
 
 def test_valid_bounty_to_api(requests_mock):
@@ -35,7 +35,7 @@ def test_valid_bounty_to_api(requests_mock):
                     expiration=datetime.datetime.now().isoformat(),
                     phase='assertion_window',
                     response_url=response_url,
-                    rules=[]
+                    rules={}
                     )
     headers = {'X-POLYSWARM-EVENT': 'bounty'}
     response = client.post('/', headers=headers, json=dataclasses.asdict(bounty))
