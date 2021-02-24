@@ -219,13 +219,13 @@ While this project is meant to be customizable, there are still a few requiremen
 * Assertions must be sent as an HTTP POST request to `bounty.response_url`.
 * Assertion requests must include an `AUTHORIZATION` header where the value is the engine's `API_KEY`.
 * All Requests to and from PolySwarm are json format.
-* Assertions must be in the format below.
+* Assertions must match the format below.
 
 ```json
 {
-  "verdict": "malicious", # Or one of "benign"  "unknown" "suspicious"
-  "bid": 1000000000000000000, # Any number between min and max bid values
-  "metadata": {} # A dict of metadata
+  "verdict": "malicious",
+  "bid": 1000000000000000000,
+  "metadata": {}
 }
 ```
 
@@ -240,7 +240,7 @@ Run the docker-compose file with `docker-compose -f docker/docker-compose up`.
 To trigger integration tests, send POST requests to `http://localhost:5000/`.
 There are several test routes that trigger webhooks to the microengine for testing.
 
-* `/test/bounty/` Sends either an malicious (EICAR) or benign bounty to scan. Integration test will print received assertion.
+* `/test/bounty` Sends either an malicious (EICAR) or benign bounty to scan. Integration test will print received assertion.
 * `/test/ping` Sends a ping event.
 * `/test/analyze` Sends an analyze event, for testing an event type microengines won't respond to.
 
