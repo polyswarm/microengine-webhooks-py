@@ -42,7 +42,6 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
       - CELERY_BROKER_URL=pyamqp://guest@rabbitmq//
-      - API_KEY=00000000000000000000000000000000
       - WEBHOOK_SECRET=qwertyuiop
       - LOG_LEVEL=DEBUG
       - LOG_FORMAT=text

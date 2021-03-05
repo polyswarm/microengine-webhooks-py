@@ -5,7 +5,6 @@ import requests
 from typing import List, Dict, Any, Optional
 from polyswarmartifact.schema import Verdict as ScanMetadata
 
-from microenginewebhookspy.settings import API_KEY
 
 class Verdict(enum.Enum):
     BENIGN = 'benign'
@@ -61,10 +60,7 @@ class Bounty:
 
     def post_assertion(self, assertion: Assertion):
         session = requests.Session()
-        headers = {
-            'Authorization': API_KEY
-        }
-        with session.post(self.response_url, headers=headers, json=dataclasses.asdict(assertion)) as response:
+        with session.post(self.response_url, json=dataclasses.asdict(assertion)) as response:
             response.raise_for_status()
 
     def __dict__(self):
