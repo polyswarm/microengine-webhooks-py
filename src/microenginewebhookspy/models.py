@@ -43,11 +43,11 @@ class ScanResult:
 
 @dataclasses.dataclass(frozen=True)
 class Bounty:
-    guid: str
+    id: int
     artifact_type: str
     artifact_url: str
-    sha256: str
-    mimetype: str
+    sha256: Optional[str]
+    mimetype: Optional[str]
     expiration: str
     phase: str
     response_url: str
