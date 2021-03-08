@@ -47,7 +47,7 @@ class ScanResult:
 class Bounty:
     id: int
     artifact_type: str
-    artifact_url: str
+    artifact_uri: str
     sha256: Optional[str]
     mimetype: Optional[str]
     expiration: str
@@ -57,7 +57,7 @@ class Bounty:
 
     def fetch_artifact(self):
         session = requests.Session()
-        with session.get(self.artifact_url) as response:
+        with session.get(self.artifact_uri) as response:
             response.raise_for_status()
             return response.content
 

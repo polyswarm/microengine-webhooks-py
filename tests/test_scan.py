@@ -12,19 +12,19 @@ from polyswarmartifact.schema import Verdict as Metadata
 def test_scan_malicious(requests_mock, mocker):
     # Setup mock assertion
     spy = mocker.spy(Bounty, 'post_assertion')
-    artifact_url = 'mock://example.com/eicar'
+    artifact_uri = 'mock://example.com/eicar'
     response_url = 'mock://example.com/response'
     eicar_sha256 = '275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f'
     # Setup http mocks
-    requests_mock.get(artifact_url, text=EICAR_STRING.decode('utf-8'))
+    requests_mock.get(artifact_uri, text=EICAR_STRING.decode('utf-8'))
     requests_mock.post(response_url, text='Success')
 
     metadata = Metadata()
     metadata.malware_family = 'EICAR-TEST-FILE'
 
-    bounty = Bounty(guid='test_scan_malicious',
+    bounty = Bounty(id='test_scan_malicious',
                     artifact_type='FILE',
-                    artifact_url=artifact_url,
+                    artifact_uri=artifact_uri,
                     sha256=eicar_sha256,
                     mimetype='text/plain',
                     expiration=datetime.datetime.now().isoformat(),
@@ -46,16 +46,16 @@ def test_scan_malicious(requests_mock, mocker):
 def test_scan_benign(requests_mock, mocker):
     # Setup mock assertion
     spy = mocker.spy(Bounty, 'post_assertion')
-    artifact_url = 'mock://example.com/not-eicar'
+    artifact_uri = 'mock://example.com/not-eicar'
     response_url = 'mock://example.com/response'
     eicar_sha256 = '09688de240a0b492aca7af12057b7f24cd5d0439f14d40b9eec1ce920bc82cb6'
     # Setup http mocks
-    requests_mock.get(artifact_url, text='not-eicar')
+    requests_mock.get(artifact_uri, text='not-eicar')
     requests_mock.post(response_url, text='Success')
 
-    bounty = Bounty(guid='test_scan_benign',
+    bounty = Bounty(id='test_scan_benign',
                     artifact_type='FILE',
-                    artifact_url=artifact_url,
+                    artifact_uri=artifact_uri,
                     sha256=eicar_sha256,
                     mimetype='text/plain',
                     expiration=datetime.datetime.now().isoformat(),
