@@ -7,11 +7,13 @@ from polyswarmartifact.schema import Verdict as ScanMetadata
 
 from microenginewebhookspy.settings import API_KEY
 
+
 class Verdict(enum.Enum):
     BENIGN = 'benign'
     MALICIOUS = 'malicious'
     SUSPICIOUS = 'suspicious'
     UNKNOWN = 'unknown'
+
 
 @dataclasses.dataclass
 class Assertion:
