@@ -47,12 +47,12 @@ class Bounty:
     id: int
     artifact_type: str
     artifact_uri: str
-    sha256: Optional[str]
-    mimetype: Optional[str]
     expiration: str
-    phase: str
     response_url: str
     rules: Dict[str, Any]
+    sha256: str = None
+    mimetype: str = None
+    phase: str = None
 
     def fetch_artifact(self):
         session = requests.Session()

@@ -24,7 +24,7 @@ def bounty_request_handler():
             logger.debug('Kicking off new scan with %s', bounty)
             handle_bounty.delay(dataclasses.asdict(bounty))
             return jsonify({'status': 'ACCEPTED'}), 202
-        except (TypeError, KeyError, ValueError):
+        except (TypeError, KeyError, ValueError) as err:
             logger.exception('Bad Request')
             return jsonify({'bounty': 'Invalid bounty request'}), 400
     if event_name == 'ping':
