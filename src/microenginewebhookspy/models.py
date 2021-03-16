@@ -50,9 +50,9 @@ class Bounty:
     expiration: str
     response_url: str
     rules: Dict[str, Any]
-    sha256: str = None
-    mimetype: str = None
-    phase: str = None
+    sha256: Optional[str] = None
+    mimetype: Optional[str] = None
+    phase: Optional[str] = None
 
     def fetch_artifact(self):
         session = requests.Session()
