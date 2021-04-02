@@ -39,11 +39,6 @@ spec:
               secretKeyRef:
                 name: {{ template "microengine-webhooks-py.fullname" . }}
                 key: CELERY_BROKER_URL
-          - name: API_KEY
-            valueFrom:
-              secretKeyRef:
-                name: {{ template "microengine-webhooks-py.fullname" . }}
-                key: API_KEY
           - name: WEBHOOK_SECRET
             valueFrom:
               secretKeyRef:

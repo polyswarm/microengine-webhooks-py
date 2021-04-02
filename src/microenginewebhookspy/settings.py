@@ -6,7 +6,6 @@ from pythonjsonlogger import jsonlogger
 from microenginewebhookspy.utils import to_wei
 
 BROKER = os.environ.get('CELERY_BROKER_URL')
-API_KEY = os.environ.get('API_KEY')
 WEBHOOK_SECRET = os.environ.get('WEBHOOK_SECRET')
 
 MAX_BID_RULE_NAME = os.environ.get('MAX_BID_RULE_NAME', 'max_allowed_bid')

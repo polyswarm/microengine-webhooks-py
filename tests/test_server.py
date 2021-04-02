@@ -21,15 +21,15 @@ def replace_scan(celery_app):
 def test_valid_bounty_to_api(requests_mock):
     client = app.test_client()
 
-    artifact_url = 'mock://example.com/eicar'
+    artifact_uri = 'mock://example.com/eicar'
     response_url = 'mock://example.com/response'
     eicar_sha356 = '275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f'
     # Setup http mocks
-    requests_mock.get(artifact_url, text=EICAR_STRING.decode('utf-8'))
+    requests_mock.get(artifact_uri, text=EICAR_STRING.decode('utf-8'))
     requests_mock.post(response_url, text='Success')
-    bounty = Bounty(guid='test_valid_bounty_to_api',
+    bounty = Bounty(id='test_valid_bounty_to_api',
                     artifact_type='FILE',
-                    artifact_url=artifact_url,
+                    artifact_uri=artifact_uri,
                     sha256=eicar_sha356,
                     mimetype='text/plain',
                     expiration=datetime.datetime.now().isoformat(),

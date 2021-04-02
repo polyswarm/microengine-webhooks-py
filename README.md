@@ -135,10 +135,7 @@ class Bounty:
 
     def post_assertion(self, assertion: Assertion):
         session = requests.Session()
-        headers = {
-            'Authorization': API_KEY
-        }
-        with session.post(self.response_url, headers=headers, json=dataclasses.asdict(assertion)) as response:
+        with session.post(self.response_url, json=dataclasses.asdict(assertion)) as response:
             response.raise_for_status()
 
     def __dict__(self):
@@ -217,7 +214,6 @@ While this project is meant to be customizable, there are still a few requiremen
 * `bounty` events should have a fast response, where the scanning is done asynchronously.
 * `ping` events must respond with a 2XX status.
 * Assertions must be sent as an HTTP POST request to `bounty.response_url`.
-* Assertion requests must include an `AUTHORIZATION` header where the value is the engine's `API_KEY`.
 * All Requests to and from PolySwarm are json format.
 * Assertions must match the format below.
 
