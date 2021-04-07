@@ -28,4 +28,6 @@ RUN pip install .
 
 EXPOSE 5000
 
+USER worker
+
 CMD ["sh", "-c", "exec honcho -f $PROCFILE start --no-prefix $PROCESS_TYPE"]
