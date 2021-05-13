@@ -26,13 +26,6 @@ setup(
     packages=find_packages('src'),
     package_dir={'': 'src/'},
     python_requires='>=3.6.5,<4',
-    test_suite='tests',
-    tests_require=[
-        'pytest',
-        'pytest-cov',
-        'pytest-mock',
-        'requests-mock'
-    ],
     classifiers=[
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
