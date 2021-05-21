@@ -1,5 +1,6 @@
 import dataclasses
 import datetime
+import logging
 import pytest
 
 import microenginewebhookspy.tasks
@@ -43,11 +44,13 @@ def test_valid_bounty_to_api(requests_mock):
     assert response.status_code == 202
 
 
-@pytest.mark.skip(msg='need to fix this to resolve TypeError')
 def test_invalid_bounty_to_api():
     client = app.test_client()
 
+    # Silencing expected log about the failure to parse this data
+    logging.disable(logging.CRITICAL)
     headers = {'X-POLYSWARM-EVENT': 'bounty'}
     response = client.post('/', headers=headers, data={'asdf': 'fdsa'})
+    logging.disable(logging.NOTSET)
 
     assert response.status_code == 400
