@@ -1,12 +1,15 @@
 import dataclasses
 import datetime
 
+from io import BytesIO
+
 from microenginewebhookspy.models import Bounty, Verdict, Assertion
 from microenginewebhookspy.utils import to_wei
-from microenginewebhookspy.scan import EICAR_STRING
 from microenginewebhookspy.tasks import handle_bounty
 
 from polyswarmartifact.schema import Verdict as Metadata
+
+from tests import EICAR_STRING
 
 
 def test_scan_malicious(requests_mock, mocker):
@@ -16,7 +19,7 @@ def test_scan_malicious(requests_mock, mocker):
     response_url = 'mock://example.com/response'
     eicar_sha256 = '275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f'
     # Setup http mocks
-    requests_mock.get(artifact_uri, text=EICAR_STRING.decode('utf-8'))
+    requests_mock.get(artifact_uri, body=BytesIO(EICAR_STRING))
     requests_mock.post(response_url, text='Success')
 
     metadata = Metadata()
@@ -31,8 +34,8 @@ def test_scan_malicious(requests_mock, mocker):
                     phase='assertion_window',
                     response_url=response_url,
                     rules={
-                        'max_allowed_bid': 1 * 10 ** 18,
-                        'min_allowed_bid': 1 * 10 ** 18 / 16,
+                        'max_allowed_bid': to_wei(1),
+                        'min_allowed_bid': to_wei(1) / 16,
                     }
                     )
 
@@ -62,8 +65,8 @@ def test_scan_benign(requests_mock, mocker):
                     phase='assertion_window',
                     response_url=response_url,
                     rules={
-                        'max_allowed_bid': 1 * 10 ** 18,
-                        'min_allowed_bid': 1 * 10 ** 18 / 16,
+                        'max_allowed_bid': to_wei(1),
+                        'min_allowed_bid': to_wei(1) / 16,
                     }
                     )
 
