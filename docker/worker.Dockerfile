@@ -19,19 +19,16 @@ RUN apt-get update -y \
         wget \
         g++ \
     && useradd -ms /bin/bash worker \
-    && chown -R worker:worker /usr/src/app \
 
+USER worker
 
-
-COPY --chown=worker requirements.txt .
+COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt \
     && pip install --no-cache-dir honcho
 
-COPY --chown=worker . .
+COPY . .
 RUN pip install .
 
 EXPOSE 5000
-
-USER worker
 
 CMD ["sh", "-c", "exec honcho -f $PROCFILE start --no-prefix $PROCESS_TYPE"]
