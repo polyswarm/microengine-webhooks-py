@@ -31,10 +31,6 @@ def compute_bid(bounty: Bounty, scan_result: ScanResult) -> int:
     max_bid = bounty.rules.get(settings.MAX_BID_RULE_NAME, settings.DEFAULT_MAX_BID)
     min_bid = bounty.rules.get(settings.MIN_BID_RULE_NAME, settings.DEFAULT_MIN_BID)
 
-    if scan_result.verdict in [Verdict.UNKNOWN, Verdict.SUSPICIOUS]:
-        # These results will produce no bill. Just set the field to be accepted
-        return 0
-
     bid = min_bid + max(scan_result.confidence * (max_bid - min_bid), 0)
     bid = min(bid, max_bid)
     return bid
