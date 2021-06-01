@@ -11,12 +11,10 @@ RUN apt update && apt install -y python3-pip \
     && apt remove -y python3-pip \
     && apt autoremove --purge -y \
     && rm -rf /var/lib/apt/lists/* /etc/apt/sources.list.d/*.list
-    && useradd -ms /bin/bash worker \
-    && chown -R worker:worker /usr/src/app \
 
-COPY --chown=worker setup.py .
-COPY --chown=worker src .
-COPY --chown=worker tests .
+COPY worker setup.py .
+COPY worker src .
+COPY worker tests .
 
 USER worker
 
