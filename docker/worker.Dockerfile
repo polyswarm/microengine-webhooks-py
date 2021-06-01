@@ -18,13 +18,13 @@ RUN apt-get update -y \
         git-core \
         wget \
         g++ \
-    && useradd -ms /bin/bash worker
+    && useradd -ms /bin/bash worker /
+    && pip install --no-cache-dir honcho
 
 USER worker
 
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt \
-    && pip install --no-cache-dir honcho
+RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 RUN pip install .
