@@ -11,7 +11,7 @@ from polyswarmartifact.schema import Verdict as Metadata
 
 def test_scan_malicious(requests_mock, mocker):
     # Setup mock assertion
-    spy = mocker.spy(Bounty, 'post_assertion')
+    spy = mocker.spy(Bounty, 'post_response')
     artifact_uri = 'mock://example.com/eicar'
     response_url = 'mock://example.com/response'
     eicar_sha256 = '275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f'
