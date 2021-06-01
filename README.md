@@ -52,8 +52,8 @@ The request_handler takes the entire json message and sends it to the `handle_bo
 The `handle_bounty` task, in `tasks.py` coordinates scanning, and bidding.
 It calls the `scan` function in `scan.py` to get a `ScanResult` object.
 The `Bounty`, and `ScanResult` are passed to `compute_bid` which yields a final `bid`.
-After that, it combines the `ScanResult`, and `bid`, into an `Assertion`.
-The `Assertion` is sent back at `bounty.response_url`.
+After that, it combines the `ScanResult`, and `bid`, into an `ScanResponse`.
+The `ScanResponse` is sent back at `bounty.response_url`.
 
 
 ## Customizing a microengine
@@ -133,9 +133,9 @@ class Bounty:
             response.raise_for_status()
             return response.content
 
-    def post_assertion(self, assertion: Assertion):
+    def post_response(self, scan_response: ScanResponse):
         session = requests.Session()
-        with session.post(self.response_url, json=dataclasses.asdict(assertion)) as response:
+        with session.post(self.response_url, json=dataclasses.asdict(scan_response)) as response:
             response.raise_for_status()
 
     def __dict__(self):
@@ -150,8 +150,8 @@ class ScanResult:
     metadata: ScanMetadata
     confidence: float = dataclasses.field(default=1)
 
-    def to_assertion(self, bid: int = 0):
-        return Assertion(self.verdict.value, bid, self.metadata.dict())
+    def to_response(self, bid: int = 0):
+        return ScanResponse(self.verdict.value, bid, self.metadata.dict())
 ```
 
 #### Suspicious or Unknown
@@ -160,7 +160,7 @@ class ScanResult:
 In the latest iteration of the marketplace, more verdict options have been added.
 Microengines can now assert with Suspicious, or Unknown verdicts, in addition to the original Malicious and Benign verdicts.
 
-Unknown indicates that the engine is working, but doesn't have enough information to make an assertion.
+Unknown indicates that the engine is working, but doesn't have enough information to make an determination.
 That could be the file isn't supported, it's taking to long to scan, or the engine just didn't want to scan it.
 Engines that don't respond at all are considered failing.
 Too many failures will pause the flow of bounties to the engine until the issue is resolved.
@@ -199,7 +199,7 @@ This marks a change from polyswarm-client, where developers just created a modul
 
 For example, developers may want to do any of the following.
 
-* Change the `metadata` field in `ScanResult` to use a `Dict` instead of polyswarm-artifact (Will require a change in `ScanResult.to_assertion` as well).
+* Change the `metadata` field in `ScanResult` to use a `Dict` instead of polyswarm-artifact (Will require a change in `ScanResult.to_response` as well).
 * Add more fields in `ScanResult` that `compute_bid` uses to generate a bid.
 * Remove `Celery` in favor of another asynchronous execution solution.
 * Change from Flask to Django, or another web framework.
@@ -213,9 +213,9 @@ While this project is meant to be customizable, there are still a few requiremen
 
 * `bounty` events should have a fast response, where the scanning is done asynchronously.
 * `ping` events must respond with a 2XX status.
-* Assertions must be sent as an HTTP POST request to `bounty.response_url`.
+* ScanResponses must be sent as an HTTP POST request to `bounty.response_url`.
 * All Requests to and from PolySwarm are json format.
-* Assertions must match the format below.
+* ScanResponses must match the format below.
 
 ```json
 {
@@ -236,7 +236,7 @@ Run the docker-compose file with `docker-compose -f docker/docker-compose up`.
 To trigger integration tests, send POST requests to `http://localhost:5000/`.
 There are several test routes that trigger webhooks to the microengine for testing.
 
-* `/test/bounty` Sends either an malicious (EICAR) or benign bounty to scan. Integration test will print received assertion.
+* `/test/bounty` Sends either an malicious (EICAR) or benign bounty to scan. Integration test will print received scan response.
 * `/test/ping` Sends a ping event.
 * `/test/analyze` Sends an analyze event, for testing an event type microengines won't respond to.
 

@@ -14,14 +14,14 @@ class Verdict(enum.Enum):
 
 
 @dataclasses.dataclass
-class Assertion:
+class ScanResponse:
     verdict: str
     bid: Optional[int]
     metadata: Dict
 
     def __eq__(self, other):
-        return isinstance(other, Assertion) and other.verdict == self.verdict\
-             and other.bid == self.bid and other.metadata == self.metadata
+        return isinstance(other, ScanResponse) and other.verdict == self.verdict \
+               and other.bid == self.bid and other.metadata == self.metadata
 
     def __hash__(self):
         calculated_hash = 7
@@ -37,8 +37,8 @@ class ScanResult:
     metadata: ScanMetadata
     confidence: float = dataclasses.field(default=1)
 
-    def to_assertion(self, bid: int = 0):
-        return Assertion(self.verdict.value, bid, self.metadata.dict())
+    def to_response(self, bid: int = 0):
+        return ScanResponse(self.verdict.value, bid, self.metadata.dict())
 
 
 @dataclasses.dataclass(frozen=True)
@@ -59,9 +59,9 @@ class Bounty:
             response.raise_for_status()
             return response.content
 
-    def post_assertion(self, assertion: Assertion):
+    def post_response(self, scan_response: ScanResponse):
         session = requests.Session()
-        with session.post(self.response_url, json=dataclasses.asdict(assertion)) as response:
+        with session.post(self.response_url, json=dataclasses.asdict(scan_response)) as response:
             response.raise_for_status()
 
     def __dict__(self):

@@ -1,7 +1,7 @@
 import dataclasses
 import datetime
 
-from microenginewebhookspy.models import Bounty, Verdict, Assertion
+from microenginewebhookspy.models import Bounty, Verdict, ScanResponse
 from microenginewebhookspy.utils import to_wei
 from microenginewebhookspy.scan import EICAR_STRING
 from microenginewebhookspy.tasks import handle_bounty
@@ -28,7 +28,7 @@ def test_scan_malicious(requests_mock, mocker):
                     sha256=eicar_sha256,
                     mimetype='text/plain',
                     expiration=datetime.datetime.now().isoformat(),
-                    phase='assertion_window',
+                    phase='assertion',
                     response_url=response_url,
                     rules={
                         'max_allowed_bid': 1 * 10 ** 18,
@@ -39,13 +39,12 @@ def test_scan_malicious(requests_mock, mocker):
     handle_bounty(dataclasses.asdict(bounty))
 
     # Not testing metadata, since it may change version over version
-    called_assertion = spy.mock_calls[0][1][1]
-    assert called_assertion.verdict == Verdict.MALICIOUS.value
+    called_response = spy.mock_calls[0][1][1]
+    assert called_response.verdict == Verdict.MALICIOUS.value
 
 
 def test_scan_benign(requests_mock, mocker):
-    # Setup mock assertion
-    spy = mocker.spy(Bounty, 'post_assertion')
+    spy = mocker.spy(Bounty, 'post_response')
     artifact_uri = 'mock://example.com/not-eicar'
     response_url = 'mock://example.com/response'
     eicar_sha256 = '09688de240a0b492aca7af12057b7f24cd5d0439f14d40b9eec1ce920bc82cb6'
@@ -59,7 +58,7 @@ def test_scan_benign(requests_mock, mocker):
                     sha256=eicar_sha256,
                     mimetype='text/plain',
                     expiration=datetime.datetime.now().isoformat(),
-                    phase='assertion_window',
+                    phase='assertion',
                     response_url=response_url,
                     rules={
                         'max_allowed_bid': 1 * 10 ** 18,
@@ -70,5 +69,5 @@ def test_scan_benign(requests_mock, mocker):
     handle_bounty(dataclasses.asdict(bounty))
 
     # Not testing metadata, since it may change version over version
-    called_assertion = spy.mock_calls[0][1][1]
-    assert called_assertion.verdict == Verdict.BENIGN.value
+    called_response = spy.mock_calls[0][1][1]
+    assert called_response.verdict == Verdict.BENIGN.value

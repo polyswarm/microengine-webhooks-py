@@ -34,7 +34,7 @@ def test_valid_bounty_to_api(requests_mock):
                     sha256=eicar_sha356,
                     mimetype='text/plain',
                     expiration=datetime.datetime.now().isoformat(),
-                    phase='assertion_window',
+                    phase='assertion',
                     response_url=response_url,
                     rules={}
                     )

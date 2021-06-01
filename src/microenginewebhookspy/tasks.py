@@ -1,6 +1,6 @@
 from celery import Celery
 
-from microenginewebhookspy.models import Bounty, ScanResult, Verdict, Assertion
+from microenginewebhookspy.models import Bounty, ScanResult, Verdict
 from microenginewebhookspy import settings
 from microenginewebhookspy.scan import scan, compute_bid
 
@@ -16,4 +16,4 @@ def handle_bounty(bounty):
     if scan_result.verdict == Verdict.MALICIOUS or scan_result.verdict == Verdict.BENIGN:
         bid = compute_bid(bounty, scan_result)
 
-    bounty.post_assertion(scan_result.to_assertion(bid))
+    bounty.post_response(scan_result.to_response(bid))
