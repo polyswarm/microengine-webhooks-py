@@ -12,10 +12,8 @@ RUN apt update && apt install -y python3-pip \
     && apt autoremove --purge -y \
     && rm -rf /var/lib/apt/lists/* /etc/apt/sources.list.d/*.list
 
-COPY worker setup.py .
-COPY worker src .
-COPY worker tests .
-
-USER worker
+COPY setup.py .
+COPY src .
+COPY tests .
 
 EXPOSE 8080
