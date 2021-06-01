@@ -1,5 +1,6 @@
 import dataclasses
 import datetime
+import logging
 import pytest
 
 import microenginewebhookspy.tasks
@@ -27,7 +28,7 @@ def test_valid_bounty_to_api(requests_mock):
     # Setup http mocks
     requests_mock.get(artifact_uri, text=EICAR_STRING.decode('utf-8'))
     requests_mock.post(response_url, text='Success')
-    bounty = Bounty(id='test_valid_bounty_to_api',
+    bounty = Bounty(id=987654321,
                     artifact_type='FILE',
                     artifact_uri=artifact_uri,
                     sha256=eicar_sha356,
@@ -46,7 +47,10 @@ def test_valid_bounty_to_api(requests_mock):
 def test_invalid_bounty_to_api():
     client = app.test_client()
 
+    # Silencing expected log about the failure to parse this data
+    logging.disable(logging.CRITICAL)
     headers = {'X-POLYSWARM-EVENT': 'bounty'}
     response = client.post('/', headers=headers, data={'asdf': 'fdsa'})
+    logging.disable(logging.NOTSET)
 
     assert response.status_code == 400

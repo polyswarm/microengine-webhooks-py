@@ -6,7 +6,6 @@ from typing import List, Dict, Any, Optional
 from polyswarmartifact.schema import Verdict as ScanMetadata
 
 
-
 class Verdict(enum.Enum):
     BENIGN = 'benign'
     MALICIOUS = 'malicious'
