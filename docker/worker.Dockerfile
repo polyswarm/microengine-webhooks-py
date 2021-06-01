@@ -18,7 +18,7 @@ RUN apt-get update -y \
         git-core \
         wget \
         g++ \
-    && useradd -ms /bin/bash worker \
+    && useradd -ms /bin/bash worker
 
 USER worker
 
