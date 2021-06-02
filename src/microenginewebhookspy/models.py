@@ -2,8 +2,13 @@ import dataclasses
 import enum
 import requests
 
-from typing import List, Dict, Any, Optional
+from typing import Dict, Any, Optional
 from polyswarmartifact.schema import Verdict as ScanMetadata
+
+
+class Phase(enum.Enum):
+    ASSERTION = 'assertion'
+    ARBITRATION = 'arbitration'
 
 
 class Verdict(enum.Enum):
@@ -16,7 +21,7 @@ class Verdict(enum.Enum):
 @dataclasses.dataclass
 class Assertion:
     verdict: str
-    bid: Optional[int]
+    bid: int
     metadata: Dict
 
     def __eq__(self, other):
