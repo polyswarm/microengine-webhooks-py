@@ -57,6 +57,7 @@ class Bounty:
     sha256: Optional[str] = None
     mimetype: Optional[str] = None
     phase: Optional[str] = None
+    metadata: Optional[dict] = None
 
     def fetch_artifact(self):
         session = requests.Session()
