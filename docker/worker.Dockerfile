@@ -21,10 +21,10 @@ RUN apt-get update -y \
     && useradd -ms /bin/bash worker \
     && pip install --no-cache-dir honcho
 
-USER worker
-
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
+
+USER worker
 
 COPY . .
 RUN pip install .
