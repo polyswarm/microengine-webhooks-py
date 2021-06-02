@@ -6,8 +6,9 @@ import pytest
 import microenginewebhookspy.tasks
 
 from microenginewebhookspy.views import Bounty
-from microenginewebhookspy.scan import EICAR_STRING
 from microenginewebhookspy.wsgi import app
+
+from tests import EICAR_STRING
 
 
 @pytest.fixture(autouse=True)
@@ -26,7 +27,7 @@ def test_valid_bounty_to_api(requests_mock):
     response_url = 'mock://example.com/response'
     eicar_sha356 = '275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f'
     # Setup http mocks
-    requests_mock.get(artifact_uri, text=EICAR_STRING.decode('utf-8'))
+    requests_mock.get(artifact_uri, body=EICAR_STRING)
     requests_mock.post(response_url, text='Success')
     bounty = Bounty(id=987654321,
                     artifact_type='FILE',
