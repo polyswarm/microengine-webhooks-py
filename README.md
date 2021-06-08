@@ -158,7 +158,7 @@ class ScanResult:
 In the latest iteration of the marketplace, more verdict options have been added.
 Microengines can now assert with Suspicious, or Unknown verdicts, in addition to the original Malicious and Benign verdicts.
 
-Unknown indicates that the engine is working, but doesn't have enough information to make an determination.
+Unknown indicates that the engine is working, but doesn't have enough information to make a determination.
 That could be the file isn't supported, it's taking to long to scan, or the engine just didn't want to scan it.
 Engines that don't respond at all are considered failing.
 Too many failures will pause the flow of bounties to the engine until the issue is resolved.
