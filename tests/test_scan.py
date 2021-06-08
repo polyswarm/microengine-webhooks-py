@@ -79,7 +79,7 @@ def test_scan_file_benign(requests_mock, mocker):
 
 def test_scan_url_malicious(requests_mock, mocker):
     # Setup mock assertion
-    spy = mocker.spy(Bounty, 'post_assertion')
+    spy = mocker.spy(Bounty, 'post_response')
     artifact_uri = 'mock://example.com/eicar'
     response_url = 'mock://example.com/response'
     eicar_sha256 = '275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f'
@@ -112,7 +112,7 @@ def test_scan_url_malicious(requests_mock, mocker):
 
 def test_scan_url_benign(requests_mock, mocker):
     # Setup mock assertion
-    spy = mocker.spy(Bounty, 'post_assertion')
+    spy = mocker.spy(Bounty, 'post_response')
     artifact_uri = 'mock://example.com/not-eicar'
     response_url = 'mock://example.com/response'
     eicar_sha256 = '09688de240a0b492aca7af12057b7f24cd5d0439f14d40b9eec1ce920bc82cb6'
