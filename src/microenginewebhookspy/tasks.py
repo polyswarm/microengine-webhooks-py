@@ -12,10 +12,14 @@ def handle_bounty(bounty):
     bounty = Bounty(**bounty)
     scan_result = scan(bounty)
 
-    if bounty.phase == Phase.ARBITRATION or scan_result.verdict in [Verdict.UNKNOWN, Verdict.SUSPICIOUS]:
-        # These results don't bid any NCT.
-        bid = 0
+    if bounty.phase == Phase.ARBITRATION:
+        scan_response = scan_result.to_vote()
     else:
-        bid = compute_bid(bounty, scan_result)
+        if scan_result.verdict in [Verdict.UNKNOWN, Verdict.SUSPICIOUS]:
+            # These results don't bid any NCT.
+            bid = 0
+        else:
+            bid = compute_bid(bounty, scan_result)
+        scan_response = scan_result.to_assertion(bid)
 
-    bounty.post_assertion(scan_result.to_assertion(bid))
+    bounty.post_response(scan_response)
