@@ -88,7 +88,6 @@ import base64
 from microenginewebhookspy.models import Bounty, ScanResult, Verdict
 
 from polyswarmartifact.schema import Verdict as ScanMetadata
-from polyswarmartifact.artifact_type import ArtifactType
 
 
 
@@ -98,17 +97,13 @@ EICAR_STRING = base64.b64decode(
 
 
 def scan(bounty: Bounty) -> ScanResult:
-    metadata = ScanMetadata()
-    metadata.malware_family = ''
-    if ArtifactType.from_string(bounty.artifact_type.lower()) != ArtifactType.FILE:
-        return ScanResult(verdict=Verdict.UNKNOWN, confidence=0, metadata=metadata)
-
     content = bounty.fetch_artifact()
+    metadata = ScanMetadata().set_malware_family('')
     if content == EICAR_STRING:
-        metadata.malware_family = 'EICAR-TEST-FILE'
-        return ScanResult(verdict=Verdict.MALICIOUS, confidence=1, metadata=metadata)
+        metadata.set_malware_family('EICAR-TEST-FILE')
+        return ScanResult(verdict=Verdict.MALICIOUS, confidence=1.0, metadata=metadata)
     else:
-        return ScanResult(verdict=Verdict.BENIGN, confidence=1, metadata=metadata)
+        return ScanResult(verdict=Verdict.BENIGN, confidence=1.0, metadata=metadata)
 ```
 
 `Bounty` and `ScanResult` are defined in `src/microenginewebhookspy/models.py`.
