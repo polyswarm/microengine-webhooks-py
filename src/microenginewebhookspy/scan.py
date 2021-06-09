@@ -3,7 +3,7 @@ import base64
 from microenginewebhookspy.models import Bounty, ScanResult, Verdict
 from microenginewebhookspy import settings
 
-from polyswarmartifact.schema import Verdict as ScanMetadata
+from polyswarmartifact.schema import ScanMetadata
 
 
 

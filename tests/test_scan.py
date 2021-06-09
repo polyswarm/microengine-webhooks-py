@@ -7,8 +7,6 @@ from microenginewebhookspy.models import Bounty, Verdict, Assertion
 from microenginewebhookspy.utils import to_wei
 from microenginewebhookspy.tasks import handle_bounty
 
-from polyswarmartifact.schema import Verdict as Metadata
-
 from tests import EICAR_STRING
 
 
@@ -21,9 +19,6 @@ def test_scan_file_malicious(requests_mock, mocker):
     # Setup http mocks
     requests_mock.get(artifact_uri, body=BytesIO(EICAR_STRING))
     requests_mock.post(response_url, text='Success')
-
-    metadata = Metadata()
-    metadata.malware_family = 'EICAR-TEST-FILE'
 
     bounty = Bounty(id=12345678,
                     artifact_type='FILE',
