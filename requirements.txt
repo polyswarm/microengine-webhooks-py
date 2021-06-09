@@ -1,7 +1,7 @@
 Flask~=1.1.2
 bump2version
 celery~=4.4.7
-polyswarm-artifact~=1.4.2
+polyswarm-artifact~=1.4.3
 pytest~=5.4.2
 pytest-cov~=2.10.1
 pytest-mock~=3.3.1

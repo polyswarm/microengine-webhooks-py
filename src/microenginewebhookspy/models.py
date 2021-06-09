@@ -3,7 +3,7 @@ import enum
 import requests
 
 from typing import Dict, Any, Optional, Union
-from polyswarmartifact.schema import Verdict as ScanMetadata
+from polyswarmartifact.schema import ScanMetadata
 
 
 class Phase(enum.Enum):
