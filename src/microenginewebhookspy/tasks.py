@@ -1,6 +1,6 @@
 from celery import Celery
 
-from microenginewebhookspy.models import Bounty, ScanResult, Verdict, Assertion
+from microenginewebhookspy.models import Bounty, ScanResult, Verdict, Assertion, Phase
 from microenginewebhookspy import settings
 from microenginewebhookspy.scan import scan, compute_bid
 
@@ -11,9 +11,15 @@ celery_app = Celery('tasks', broker=settings.BROKER)
 def handle_bounty(bounty):
     bounty = Bounty(**bounty)
     scan_result = scan(bounty)
-    bid = None
 
-    if scan_result.verdict == Verdict.MALICIOUS or scan_result.verdict == Verdict.BENIGN:
-        bid = compute_bid(bounty, scan_result)
+    if bounty.phase == Phase.ARBITRATION:
+        scan_response = scan_result.to_vote()
+    else:
+        if scan_result.verdict in [Verdict.UNKNOWN, Verdict.SUSPICIOUS]:
+            # These results don't bid any NCT.
+            bid = 0
+        else:
+            bid = compute_bid(bounty, scan_result)
+        scan_response = scan_result.to_assertion(bid)
 
-    bounty.post_assertion(scan_result.to_assertion(bid))
+    bounty.post_response(scan_response)
