@@ -19,6 +19,7 @@ RUN apt-get update -y \
         wget \
         g++ \
     && useradd -ms /bin/bash worker \
+    && chown -R worker:worker /usr/src/app \
     && pip install --no-cache-dir honcho
 
 COPY requirements.txt .
