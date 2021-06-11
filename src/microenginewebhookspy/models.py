@@ -33,9 +33,9 @@ class Vote:
 
 @dataclasses.dataclass
 class ScanResult:
-    verdict: Verdict
-    metadata: ScanMetadata
-    confidence: float = dataclasses.field(default=1)
+    verdict: Verdict = dataclasses.field(default=Verdict.UNKNOWN)
+    metadata: ScanMetadata = dataclasses.field(default_factory=lambda: ScanMetadata().set_malware_family(''))
+    confidence: float = dataclasses.field(default=1.0)
 
     def to_assertion(self, bid: int = 0):
         return Assertion(self.verdict.value, bid, self.metadata.dict())
