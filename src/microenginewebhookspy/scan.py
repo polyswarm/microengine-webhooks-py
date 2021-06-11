@@ -6,7 +6,6 @@ from microenginewebhookspy import settings
 from polyswarmartifact.schema import ScanMetadata
 
 
-
 EICAR_STRING = base64.b64decode(
     b'WDVPIVAlQEFQWzRcUFpYNTQoUF4pN0NDKTd9JEVJQ0FSLVNUQU5EQVJELUFOVElWSVJVUy1URVNULUZJTEUhJEgrSCo='
 )
