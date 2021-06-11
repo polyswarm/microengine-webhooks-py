@@ -3,6 +3,9 @@ version: '3.7'
 services:
   rabbitmq:
     image: rabbitmq
+    environment:
+      - RABBITMQ_DEFAULT_USER=user
+      - RABBITMQ_DEFAULT_PASS=password
     ports:
       - "5672:5672"
     networks:
@@ -15,7 +18,7 @@ services:
       - microengine-webhooks
     environment:
       - PYTHONUNBUFFERED=1
-      - CELERY_BROKER_URL=pyamqp://guest@rabbitmq//
+      - CELERY_BROKER_URL=pyamqp://user:password@rabbitmq//
       - PROCESS_TYPE=celery
   integration:
     build:
@@ -41,7 +44,7 @@ services:
       - microengine-webhooks
     environment:
       - PYTHONUNBUFFERED=1
-      - CELERY_BROKER_URL=pyamqp://guest@rabbitmq//
+      - CELERY_BROKER_URL=pyamqp://user:password@rabbitmq//
       - WEBHOOK_SECRET=qwertyuiop
       - LOG_LEVEL=DEBUG
       - LOG_FORMAT=text
