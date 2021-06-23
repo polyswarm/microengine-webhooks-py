@@ -1,4 +1,5 @@
 import dataclasses
+import dateutil.parser
 import logging
 
 from flask import request, jsonify, Blueprint
@@ -22,7 +23,8 @@ def bounty_request_handler():
             body = request.get_json()
             bounty = Bounty(**body)
             logger.debug('Kicking off new scan with %s', bounty)
-            handle_bounty.delay(dataclasses.asdict(bounty))
+            expiration = dateutil.parser.parse(bounty.expiration)
+            handle_bounty.apply_async((dataclasses.asdict(bounty),), expires=expiration)
             return jsonify({'status': 'ACCEPTED'}), 202
         except (TypeError, KeyError, ValueError) as err:
             logger.exception('Bad Request')
