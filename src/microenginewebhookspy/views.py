@@ -23,11 +23,10 @@ def bounty_request_handler():
         try:
             body = request.get_json()
             bounty = Bounty(**body)
-            logger.debug('Kicking off new scan with %s', bounty)
             expiration = dateutil.parser.parse(bounty.expiration)
-            # expires should handle the case where bounty arrives past the expiration
-            delta = expiration - datetime.datetime.now()
-            soft_limit = abs(delta.total_seconds())
+            delta = expiration - datetime.datetime.now(datetime.timezone.utc)
+            soft_limit = delta.total_seconds()
+            logger.debug('Processing new bounty %s with %s seconds until expiration', bounty, soft_limit)
             handle_bounty.apply_async((dataclasses.asdict(bounty),), soft_time_limit=soft_limit, expires=expiration)
             return jsonify({'status': 'ACCEPTED'}), 202
         except (TypeError, KeyError, ValueError) as err:
