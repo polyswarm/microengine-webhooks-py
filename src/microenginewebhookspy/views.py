@@ -25,7 +25,7 @@ def bounty_request_handler():
             bounty = Bounty(**body)
             expiration = dateutil.parser.parse(bounty.expiration)
             delta = expiration - datetime.datetime.now(datetime.timezone.utc)
-            soft_limit = delta.total_seconds()
+            soft_limit = int(delta.total_seconds())
             logger.debug('Processing new bounty %s with %s seconds until expiration', bounty, soft_limit)
             handle_bounty.apply_async((dataclasses.asdict(bounty),), soft_time_limit=soft_limit, expires=expiration)
             return jsonify({'status': 'ACCEPTED'}), 202
