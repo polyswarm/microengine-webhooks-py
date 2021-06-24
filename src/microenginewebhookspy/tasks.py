@@ -10,10 +10,7 @@ celery_app = Celery('tasks', broker=settings.BROKER)
 @celery_app.task
 def handle_bounty(bounty):
     bounty = Bounty(**bounty)
-    try:
-        scan_result = scan(bounty)
-    except exceptions.SoftTimeLimitExceeded:
-        scan_result = ScanResult()
+    scan_result = scan(bounty)
 
     if bounty.phase == Phase.ARBITRATION:
         scan_response = scan_result.to_vote()
