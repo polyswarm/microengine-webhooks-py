@@ -25,7 +25,7 @@ def bounty_request_handler():
             bounty = Bounty(**body)
             logger.debug('Kicking off new scan with %s', bounty)
             expiration = dateutil.parser.parse(bounty.expiration)
-            # expires should handle this, so not concerned about the case we are past the expiration
+            # expires should handle the case where bounty arrives past the expiration
             delta = expiration - datetime.datetime.now()
             soft_limit = abs(delta.total_seconds())
             handle_bounty.apply_async((dataclasses.asdict(bounty),), soft_time_limit=soft_limit, expires=expiration)
