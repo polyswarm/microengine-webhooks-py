@@ -25,7 +25,7 @@ def test_scan_file_malicious(requests_mock, mocker):
                     artifact_uri=artifact_uri,
                     sha256=eicar_sha256,
                     mimetype='text/plain',
-                    expiration=datetime.datetime.now().isoformat(),
+                    expiration=datetime.datetime.now(datetime.timezone.utc).isoformat(),
                     phase='assertion_window',
                     response_url=response_url,
                     rules={
@@ -56,7 +56,7 @@ def test_scan_file_benign(requests_mock, mocker):
                     artifact_uri=artifact_uri,
                     sha256=eicar_sha256,
                     mimetype='text/plain',
-                    expiration=datetime.datetime.now().isoformat(),
+                    expiration=datetime.datetime.now(datetime.timezone.utc).isoformat(),
                     phase='assertion_window',
                     response_url=response_url,
                     rules={
