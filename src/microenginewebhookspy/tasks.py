@@ -1,4 +1,4 @@
-from celery import Celery, exceptions
+from celery import Celery
 
 from microenginewebhookspy.models import Bounty, ScanResult, Verdict, Assertion, Phase
 from microenginewebhookspy import settings
