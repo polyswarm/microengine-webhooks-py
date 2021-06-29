@@ -1,7 +1,7 @@
 image: $REPO_URL/stage
 
 services:
-  - docker:dind
+  - $REPO_URL/docker:dind
 
 stages:
   - build
