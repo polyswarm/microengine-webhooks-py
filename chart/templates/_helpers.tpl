@@ -51,6 +51,22 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
+Nginx Selector labels
+*/}}
+{{- define "microengine-webhooks-py.nginx.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "microengine-webhooks-py.name" . }}-nginx
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+
+{{/*
+Worker Selector labels
+*/}}
+{{- define "microengine-webhooks-py.worker.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "microengine-webhooks-py.name" . }}-worker
+app.kubernetes.io/instance: {{ .Release.Name }}
+{{- end }}
+
+{{/*
 Create the name of the service account to use
 */}}
 {{- define "microengine-webhooks-py.serviceAccountName" -}}
