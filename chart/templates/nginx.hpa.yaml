@@ -9,7 +9,7 @@ spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ include "microengine-webhooks-py.fullname" . }}
+    name: {{ include "microengine-webhooks-py.fullname" . }}-nginx
   minReplicas: {{ .Values.nginx.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.nginx.autoscaling.maxReplicas }}
   metrics:
