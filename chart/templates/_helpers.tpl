@@ -51,7 +51,19 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
-Nginx Selector labels
+Nginx labels
+*/}}
+{{- define "microengine-webhooks-py.nginx.labels" -}}
+helm.sh/chart: {{ include "microengine-webhooks-py.chart" . }}
+{{ include "microengine-webhooks-py.nginx.selectorLabels" . }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}
+
+{{/*
+Nginx selector labels
 */}}
 {{- define "microengine-webhooks-py.nginx.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "microengine-webhooks-py.name" . }}-nginx
@@ -59,7 +71,19 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end }}
 
 {{/*
-Worker Selector labels
+Worker labels
+*/}}
+{{- define "microengine-webhooks-py.worker.labels" -}}
+helm.sh/chart: {{ include "microengine-webhooks-py.chart" . }}
+{{ include "microengine-webhooks-py.worker.selectorLabels" . }}
+{{- if .Chart.AppVersion }}
+app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+{{- end }}
+app.kubernetes.io/managed-by: {{ .Release.Service }}
+{{- end }}
+
+{{/*
+Worker selector labels
 */}}
 {{- define "microengine-webhooks-py.worker.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "microengine-webhooks-py.name" . }}-worker

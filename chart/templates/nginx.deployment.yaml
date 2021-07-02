@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: {{ include "microengine-webhooks-py.fullname" . }}-nginx
   labels:
-    {{- include "microengine-webhooks-py.labels" . | nindent 4 }}
+    {{- include "microengine-webhooks-py.nginx.labels" . | nindent 4 }}
 spec:
 {{- if not .Values.nginx.autoscaling.enabled }}
   replicas: {{ .Values.nginx.replicaCount }}
