@@ -3,14 +3,14 @@ kind: Deployment
 metadata:
   name: {{ include "microengine-webhooks-py.fullname" . }}-nginx
   labels:
-    {{- include "microengine-webhooks-py.labels" . | nindent 4 }}
+    {{- include "microengine-webhooks-py.nginx.labels" . | nindent 4 }}
 spec:
 {{- if not .Values.nginx.autoscaling.enabled }}
   replicas: {{ .Values.nginx.replicaCount }}
 {{- end }}
   selector:
     matchLabels:
-      {{- include "microengine-webhooks-py.selectorLabels" . | nindent 6 }}
+      {{- include "microengine-webhooks-py.nginx.selectorLabels" . | nindent 6 }}
   template:
     metadata:
     {{- with .Values.nginx.podAnnotations }}
@@ -18,7 +18,7 @@ spec:
         {{- toYaml . | nindent 8 }}
     {{- end }}
       labels:
-        {{- include "microengine-webhooks-py.selectorLabels" . | nindent 8 }}
+        {{- include "microengine-webhooks-py.nginx.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.nginx.imagePullSecrets }}
       imagePullSecrets:

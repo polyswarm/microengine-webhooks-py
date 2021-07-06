@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: {{ include "microengine-webhooks-py.fullname" . }}-nginx
   labels:
-    {{- include "microengine-webhooks-py.labels" . | nindent 4 }}
+    {{- include "microengine-webhooks-py.nginx.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.nginx.service.type }}
   ports:
@@ -12,4 +12,4 @@ spec:
       protocol: TCP
       name: http
   selector:
-    {{- include "microengine-webhooks-py.selectorLabels" . | nindent 4 }}
+    {{- include "microengine-webhooks-py.nginx.selectorLabels" . | nindent 4 }}

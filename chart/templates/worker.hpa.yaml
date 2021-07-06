@@ -4,12 +4,12 @@ kind: HorizontalPodAutoscaler
 metadata:
   name: {{ include "microengine-webhooks-py.fullname" . }}-worker
   labels:
-    {{- include "microengine-webhooks-py.labels" . | nindent 4 }}
+    {{- include "microengine-webhooks-py.worker.labels" . | nindent 4 }}
 spec:
   scaleTargetRef:
     apiVersion: apps/v1
     kind: Deployment
-    name: {{ include "microengine-webhooks-py.fullname" . }}
+    name: {{ include "microengine-webhooks-py.fullname" . }}-worker
   minReplicas: {{ .Values.worker.autoscaling.minReplicas }}
   maxReplicas: {{ .Values.worker.autoscaling.maxReplicas }}
   metrics:
