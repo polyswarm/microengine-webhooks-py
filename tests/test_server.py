@@ -34,7 +34,7 @@ def test_valid_bounty_to_api(requests_mock):
                     artifact_uri=artifact_uri,
                     sha256=eicar_sha356,
                     mimetype='text/plain',
-                    expiration=datetime.datetime.now().isoformat(),
+                    expiration=datetime.datetime.now(datetime.timezone.utc).isoformat(),
                     phase='assertion_window',
                     response_url=response_url,
                     rules={}
