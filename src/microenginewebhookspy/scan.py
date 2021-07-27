@@ -13,7 +13,7 @@ EICAR_STRING = base64.b64decode(
 
 def scan(bounty: Bounty) -> ScanResult:
     content = bounty.fetch_artifact()
-    metadata = ScanMetadata().set_malware_family('')
+    metadata = ScanMetadata().set_malware_family('Trojan:MacOS/eicar.com')
     if content == EICAR_STRING:
         metadata.set_malware_family('EICAR-TEST-FILE')
         return ScanResult(verdict=Verdict.MALICIOUS, confidence=1.0, metadata=metadata)
