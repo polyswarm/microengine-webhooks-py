@@ -15,7 +15,7 @@ def scan(bounty: Bounty) -> ScanResult:
     content = bounty.fetch_artifact()
     metadata = ScanMetadata().set_malware_family('')
     if content == EICAR_STRING:
-        metadata.set_malware_family('EICAR-TEST-FILE')
+        metadata.set_malware_family('EICAR-Test-File')
         return ScanResult(verdict=Verdict.MALICIOUS, confidence=1.0, metadata=metadata)
     else:
         return ScanResult(verdict=Verdict.BENIGN, confidence=1.0, metadata=metadata)
