@@ -62,6 +62,8 @@ spec:
             value: {{ .Values.worker.logFormat }}
           - name: PROCESS_TYPE
             value: {{ .Values.worker.processType }}
+          - name: POLY_WORK
+            value: {{ .Values.worker.polyWork }}
           resources:
             {{- toYaml .Values.worker.resources | nindent 12 }}
       {{- with .Values.worker.nodeSelector }}
