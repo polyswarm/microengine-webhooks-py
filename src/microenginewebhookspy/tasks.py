@@ -34,7 +34,8 @@ def handle_bounty(bounty):
         try:
             scan_result = scan(bounty)
             handle_bounty.metrics.increment(SCAN_SUCCESS, tags=[f'type:{bounty.artifact_type}'])
-            handle_bounty.metrics.increment(SCAN_VERDICT, tags=[f'type:{bounty.artifact_type}', f'verdict:{scan_result.verdict.value}'])
+            handle_bounty.metrics.increment(SCAN_VERDICT, tags=[f'type:{bounty.artifact_type}',
+                                                                f'verdict:{scan_result.verdict.value}'])
         except errors.HighCompressionScanError:
             handle_bounty.metrics.increment(
                 SCAN_FAIL, tags=[bounty.artifact_type, 'scan_error: High Compression']
