@@ -16,7 +16,7 @@ DEFAULT_MIN_BID = os.environ.get('DEFAULT_MIN_BID', to_wei(1) / 16)
 # Metrics values
 DATADOG_API_KEY = os.environ.get('DATADOG_API_KEY')
 DATADOG_APP_KEY = os.environ.get('DATADOG_APP_KEY')
-ENGINE_NAME = os.environ.get('ENGINE_NAME', 'kaspersky')
+ENGINE_NAME = os.environ.get('ENGINE_NAME', 'microengine-webhooks-py')
 POLY_WORK = os.environ.get('POLY_WORK', 'local')
 
 
