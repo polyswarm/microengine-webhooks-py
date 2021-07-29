@@ -46,6 +46,16 @@ spec:
               secretKeyRef:
                 name: {{ template "microengine-webhooks-py.fullname" . }}
                 key: WEBHOOK_SECRET
+          - name: DATADOG_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: { { template "microengine-kaspersky.fullname" . } }
+                key: DATADOG_API_KEY
+          - name: DATADOG_APP_KEY
+            valueFrom:
+              secretKeyRef:
+                name: { { template "microengine-kaspersky.fullname" . } }
+                key: DATADOG_APP_KEY
           - name: LOG_LEVEL
             value: {{ .Values.worker.logLevel }}
           - name: LOG_FORMAT
