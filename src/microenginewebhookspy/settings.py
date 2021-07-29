@@ -13,6 +13,12 @@ MIN_BID_RULE_NAME = os.environ.get('MIN_BID_RULE_NAME', 'min_allowed_bid')
 DEFAULT_MAX_BID = os.environ.get('DEFAULT_MAX_BID', to_wei(1))
 DEFAULT_MIN_BID = os.environ.get('DEFAULT_MIN_BID', to_wei(1) / 16)
 
+# Metrics values
+DATADOG_API_KEY = os.environ.get('DATADOG_API_KEY')
+DATADOG_APP_KEY = os.environ.get('DATADOG_APP_KEY')
+ENGINE_NAME = os.environ.get('ENGINE_NAME', 'kaspersky')
+POLY_WORK = os.environ.get('POLY_WORK', 'local')
+
 
 class JSONFormatter(jsonlogger.JsonFormatter):
     """
