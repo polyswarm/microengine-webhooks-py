@@ -30,6 +30,7 @@ class MetricsTask(Task):
 @celery_app.task(base=MetricsTask)
 def handle_bounty(bounty):
     bounty = Bounty(**bounty)
+    scan_result = ScanResult()
     with handle_bounty.metrics.timer(SCAN_TIME):
         try:
             scan_result = scan(bounty)
