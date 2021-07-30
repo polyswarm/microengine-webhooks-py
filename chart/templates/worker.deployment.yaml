@@ -46,12 +46,24 @@ spec:
               secretKeyRef:
                 name: {{ template "microengine-webhooks-py.fullname" . }}
                 key: WEBHOOK_SECRET
+          - name: DATADOG_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "microengine-webhooks-py.fullname" . }}
+                key: DATADOG_API_KEY
+          - name: DATADOG_APP_KEY
+            valueFrom:
+              secretKeyRef:
+                name: {{ template "microengine-webhooks-py.fullname" . }}
+                key: DATADOG_APP_KEY
           - name: LOG_LEVEL
             value: {{ .Values.worker.logLevel }}
           - name: LOG_FORMAT
             value: {{ .Values.worker.logFormat }}
           - name: PROCESS_TYPE
             value: {{ .Values.worker.processType }}
+          - name: POLY_WORK
+            value: {{ .Values.worker.polyWork }}
           resources:
             {{- toYaml .Values.worker.resources | nindent 12 }}
       {{- with .Values.worker.nodeSelector }}

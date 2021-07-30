@@ -18,6 +18,7 @@ worker:
   logLevel: "WARNING"
   logFormat: "json"
   processType: "celery"
+  polyWork: "local"
 
   replicaCount: 1
 

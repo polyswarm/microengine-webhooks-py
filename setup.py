@@ -19,6 +19,7 @@ setup(
     install_requires=[
         "celery",
         "Flask",
+        "microengine-utils",
         "polyswarm-artifact",
         "requests",
         "python-json-logger"
