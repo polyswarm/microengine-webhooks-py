@@ -38,31 +38,31 @@ def handle_bounty(bounty):
                                                                 f'verdict:{scan_result.verdict.value}'])
         except errors.HighCompressionScanError:
             handle_bounty.metrics.increment(
-                SCAN_FAIL, tags=[bounty.artifact_type, 'scan_error: High Compression']
+                SCAN_FAIL, tags=[f'type:{bounty.artifact_type}', 'scan_error:highcompression']
             )
         except errors.EncryptedFileScanError:
             handle_bounty.metrics.increment(
-                SCAN_FAIL, tags=[bounty.artifact_type, 'scan_error: File encrypted']
+                SCAN_FAIL, tags=[f'type:{bounty.artifact_type}', 'scan_error:encryptedfile']
             )
         except errors.CorruptFileScanError:
             handle_bounty.metrics.increment(
-                SCAN_FAIL, tags=[bounty.artifact_type, 'scan_error: File corrupted']
+                SCAN_FAIL, tags=[f'type:{bounty.artifact_type}', 'scan_error:corruptfile']
             )
         except errors.FileSkippedScanError:
             handle_bounty.metrics.increment(
-                SCAN_FAIL, tags=[bounty.artifact_type, 'scan_error: File Skipped']
+                SCAN_FAIL, tags=[f'type:{bounty.artifact_type}', 'scan_error:fileskipped']
             )
         except errors.ServerNotReadyScanError:
             handle_bounty.metrics.increment(
-                SCAN_FAIL, tags=[bounty.artifact_type, 'scan_error: Server not ready']
+                SCAN_FAIL, tags=[f'type:{bounty.artifact_type}', 'scan_error:servernotready']
             )
         except errors.CalledProcessScanError:
             handle_bounty.metrics.increment(
-                SCAN_FAIL, tags=[bounty.artifact_type, 'scan_error: Error running scan process']
+                SCAN_FAIL, tags=[f'type:{bounty.artifact_type}', 'scan_error:calledprocess']
             )
         except errors.UnprocessableScanError:
             handle_bounty.metrics.increment(
-                SCAN_FAIL, tags=[bounty.artifact_type, 'scan_error: Unprocessable']
+                SCAN_FAIL, tags=[f'type:{bounty.artifact_type}', 'scan_error:unprocessable']
             )
 
     if bounty.phase == Phase.ARBITRATION:
