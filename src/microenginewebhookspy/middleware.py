@@ -22,6 +22,7 @@ class ValidateSenderMiddleware:
         wsgi_input = environ['wsgi.input'].read()
         try:
             signature = environ['HTTP_X_POLYSWARM_SIGNATURE']
+            logger.debug('Type signature: %s', type(signature))
         except KeyError:
             message = json.dumps({"X-POLYSWARM-SIGNATURE": "Signature not included in headers"}).encode('utf-8')
             start_response("400 Bad Request",
