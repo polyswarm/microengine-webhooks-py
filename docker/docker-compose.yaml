@@ -10,7 +10,7 @@ services:
       - "5672:5672"
     networks:
       - microengine-webhooks
-  celery:
+  worker:
     build:
       context: ../
       dockerfile: docker/worker.Dockerfile
