@@ -1,3 +1,4 @@
+import hashlib
 import hmac
 import json
 import logging
@@ -21,7 +22,9 @@ class ValidateSenderMiddleware:
 
         wsgi_input = environ['wsgi.input'].read()
         try:
-            signature = environ['HTTP_X_POLYSWARM_SIGNATURE']
+            # added .encode().decode() to make this work in python 3.8+
+            # else hmac.compare_digest() complains about non-ascii chars
+            signature = environ['HTTP_X_POLYSWARM_SIGNATURE'].encode('utf-8').decode('utf-8')
         except KeyError:
             message = json.dumps({"X-POLYSWARM-SIGNATURE": "Signature not included in headers"}).encode('utf-8')
             start_response("400 Bad Request",
@@ -39,6 +42,6 @@ class ValidateSenderMiddleware:
 
     @staticmethod
     def _valid_signature(body, signature, secret):
-        digest = hmac.new(secret.encode('utf-8'), body, digestmod="sha256").hexdigest()
-        logger.debug('Comparing computed %s vs given %s', digest, signature)
+        digest = hmac.new(secret.encode('utf-8'), body, digestmod=hashlib.sha256).hexdigest()
+        logger.debug('Comparing computed digest "%s" (%d) vs given signature "%s" (%d)', digest, len(digest), signature, len(signature))
         return hmac.compare_digest(digest, signature)
