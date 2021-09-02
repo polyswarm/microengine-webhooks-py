@@ -23,7 +23,7 @@ class ValidateSenderMiddleware:
         wsgi_input = environ['wsgi.input'].read()
         try:
             # added .encode().decode() to make this work in python 3.8+
-            signature = environ['HTTP_X_POLYSWARM_SIGNATURE'].encode('utf-8').decode('utf-8')
+            signature = environ['HTTP_X_POLYSWARM_SIGNATURE'].encode('utf-8')
             logger.debug('Type signature: %r', type(signature).__name__)
         except KeyError:
             message = json.dumps({"X-POLYSWARM-SIGNATURE": "Signature not included in headers"}).encode('utf-8')
@@ -42,10 +42,10 @@ class ValidateSenderMiddleware:
 
     @staticmethod
     def _valid_signature(body, signature, secret):
-        digest = hmac.new(secret.encode('utf-8'), body, digestmod=hashlib.sha256).hexdigest()
-        logger.debug('Comparing computed digest "%s" (%d) vs given signature "%s" (%d)', digest, len(digest), signature, len(signature))
-        assert _is_ascii(digest)
-        assert _is_ascii(signature)
+        digest = hmac.new(secret.encode('utf-8'), body, digestmod=hashlib.sha256).digest()
+        logger.debug(b'Comparing computed digest "%r" (%d) vs given signature "%r" (%d)', digest, len(digest), signature, len(signature))
+        # assert _is_ascii(digest)
+        # assert _is_ascii(signature)
         return hmac.compare_digest(digest, signature)
 
 
