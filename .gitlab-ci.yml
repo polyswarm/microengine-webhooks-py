@@ -33,7 +33,7 @@ build-nginx:
   tags:
     - kube-small-new
   script:
-    - e2e dependencies docker/Dockerfile $BASE_IMAGE_NAME
+    - e2e dependencies docker/Dockerfile
     # explicitly pull the latest version of the dependant image
     - sed "s#FROM nginx/unit#FROM $REPO_URL/unit#" docker/Dockerfile > docker/Dockerfile.ci
     - docker build
@@ -52,7 +52,7 @@ build-worker:
   tags:
     - kube-small-new
   script:
-    - e2e dependencies docker/Dockerfile $BASE_IMAGE_NAME-$WORKER_SUFFIX
+    - e2e dependencies docker/Dockerfile-$WORKER_SUFFIX
     - sed "s#FROM python#FROM $REPO_URL/python#" docker/worker.Dockerfile > docker/worker.Dockerfile.ci
     # explicitly pull the latest version of the dependant image
     - docker build
