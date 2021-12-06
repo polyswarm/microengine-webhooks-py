@@ -1,4 +1,5 @@
 import os
+from logging.config import dictConfig
 
 from datetime import datetime
 from pythonjsonlogger import jsonlogger
@@ -73,3 +74,5 @@ LOGGING = {
         'level': LOG_LEVEL,
     }
 }
+
+dictConfig(LOGGING)
