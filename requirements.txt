@@ -1,6 +1,6 @@
 Flask~=1.1.2
 bump2version
-celery~=4.4.7
+celery~=5.2
 microengine-utils~=1.5.0
 polyswarm-artifact~=1.4.3
 pytest~=5.4.2
