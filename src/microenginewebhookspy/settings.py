@@ -1,9 +1,6 @@
 import os
 from logging.config import dictConfig
 
-from datetime import datetime
-from pythonjsonlogger import jsonlogger
-
 from microenginewebhookspy.utils import to_wei
 
 BROKER = os.environ.get('CELERY_BROKER_URL')
@@ -20,26 +17,6 @@ DATADOG_APP_KEY = os.environ.get('DATADOG_APP_KEY')
 ENGINE_NAME = os.environ.get('ENGINE_NAME', 'microengine-webhooks-py')
 POLY_WORK = os.environ.get('POLY_WORK', 'local')
 
-
-class JSONFormatter(jsonlogger.JsonFormatter):
-    """
-    Class to add custom JSON fields to our logger.
-    Presently just adds a timestamp if one isn't present and the log level.
-    INFO: https://github.com/madzak/python-json-logger#customizing-fields
-    """
-
-    def add_fields(self, log_record, record, message_dict):
-        super(JSONFormatter, self).add_fields(log_record, record, message_dict)
-        if not log_record.get('timestamp'):
-            # this doesn't use record.created, so it is slightly off
-            now = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%fZ')
-            log_record['timestamp'] = now
-        if log_record.get('level'):
-            log_record['level'] = log_record['level'].upper()
-        else:
-            log_record['level'] = record.levelname
-
-
 LOG_LEVEL = os.getenv('LOG_LEVEL', 'INFO')
 LOG_FORMAT = os.getenv('LOG_FORMAT', 'text')
 LOGGING = {
@@ -51,7 +28,7 @@ LOGGING = {
         },
         'json': {
             'format': '%(level) %(name) %(timestamp) %(message)',
-            'class': 'microenginewebhookspy.settings.JSONFormatter',
+            'class': 'microenginewebhookspy.JSONFormatter',
         },
     },
     'handlers': {
