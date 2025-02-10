@@ -69,10 +69,7 @@ class Bounty:
             return response.content
 
     def post_response(self, scan_response: Union[Vote, Assertion]):
-        if logger.getEffectiveLevel() >= logging.DEBUG:
-            wrapper = _set_http_debug
-        else:
-            wrapper = contextlib.nullcontext
+        wrapper = _set_http_debug if logger.getEffectiveLevel() >= logging.DEBUG else contextlib.nullcontext
 
         session = requests.Session()
         with wrapper(), session.post(self.response_url, json=dataclasses.asdict(scan_response)) as response:
