@@ -8,7 +8,7 @@ except IOError:
 
 setup(
     name="microenginewebhookspy",
-    version="0.2.0",
+    version="0.2.1",
     description="Exemplar microengine in python using webhooks",
     long_description=long_description,
     long_description_content_type="text/markdown",
