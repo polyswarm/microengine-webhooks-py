@@ -69,8 +69,13 @@ class Bounty:
             return response.content
 
     def post_response(self, scan_response: Union[Vote, Assertion]):
+        if logger.getEffectiveLevel() >= logging.DEBUG:
+            wrapper = _set_http_debug
+        else:
+            wrapper = contextlib.nullcontext
+
         session = requests.Session()
-        with session.post(self.response_url, json=dataclasses.asdict(scan_response)) as response:
+        with wrapper(), session.post(self.response_url, json=dataclasses.asdict(scan_response)) as response:
             response.raise_for_status()
             if logger.getEffectiveLevel() >= logging.DEBUG:
                 logger.debug('request body: %s', response.request.body)
@@ -78,3 +83,22 @@ class Bounty:
 
     def __dict__(self):
         return dataclasses.asdict(self)
+
+
+@contextlib.contextmanager
+def _set_http_debug():
+    """
+    Produce logs of HTTP calls
+
+    Produces logs by manipulating `http.client.HTTPConnetion`,
+    as suggested on https://github.com/urllib3/urllib3/issues/107#issuecomment-11690207
+    """
+    # You'll need to do this before urllib3 creates any http connection objects
+    import http.client
+
+    initial_debuglevel = http.client.HTTPConnection.debuglevel
+    http.client.HTTPConnection.debuglevel = 5
+    try:
+        yield
+    finally:
+        http.client.HTTPConnection.debuglevel = initial_debuglevel
