@@ -31,7 +31,7 @@ default:
 build-nginx:
   stage: build
   tags:
-    - kube-small-new
+    - stage-kube-newer
   script:
     - e2e dependencies docker/Dockerfile
     # explicitly pull the latest version of the dependant image
@@ -50,7 +50,7 @@ build-nginx:
 build-worker:
   stage: build
   tags:
-    - kube-small-new
+    - stage-kube-newer
   script:
     - sed "s#FROM python#FROM $REPO_URL/python#" docker/worker.Dockerfile > docker/worker.Dockerfile.ci
     - e2e dependencies docker/worker.Dockerfile.ci
@@ -73,7 +73,7 @@ build-worker:
 test:
   stage: test
   tags:
-    - kube-small-new
+    - stage-kube-newer
   coverage: '/TOTAL.*\s+(\d+%)$/'
   script:
     - docker network create microengine-webhooks-py
@@ -100,7 +100,7 @@ e2e:
 release:
   stage: release
   tags:
-    - kube-small-new
+    - stage-kube-newer
   script:
     - docker pull $REPO_URL/$BASE_IMAGE_NAME:$CI_COMMIT_SHA
     - docker tag $REPO_URL/$BASE_IMAGE_NAME:$CI_COMMIT_SHA $REPO_URL/$BASE_IMAGE_NAME:latest
@@ -111,7 +111,7 @@ release:
 release-worker:
   stage: release
   tags:
-    - kube-small-new
+    - stage-kube-newer
   script:
     - docker pull $REPO_URL/$BASE_IMAGE_NAME-$WORKER_SUFFIX:$CI_COMMIT_SHA
     - docker tag $REPO_URL/$BASE_IMAGE_NAME-$WORKER_SUFFIX:$CI_COMMIT_SHA $REPO_URL/$BASE_IMAGE_NAME-$WORKER_SUFFIX:latest
