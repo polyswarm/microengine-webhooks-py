@@ -1,9 +1,14 @@
+import contextlib
+import logging
 import dataclasses
 import enum
 import requests
 
 from typing import Dict, Any, Optional, Union
 from polyswarmartifact.schema import ScanMetadata
+
+
+logger = logging.getLogger(__name__)
 
 
 class Phase(enum.Enum):
@@ -67,6 +72,9 @@ class Bounty:
         session = requests.Session()
         with session.post(self.response_url, json=dataclasses.asdict(scan_response)) as response:
             response.raise_for_status()
+            if logger.getEffectiveLevel() >= logging.DEBUG:
+                logger.debug('request body: %s', response.request.body)
+                logger.debug('response body: %s', response.text)
 
     def __dict__(self):
         return dataclasses.asdict(self)
