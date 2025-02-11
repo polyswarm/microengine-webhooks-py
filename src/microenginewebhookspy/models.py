@@ -1,9 +1,14 @@
+import contextlib
+import logging
 import dataclasses
 import enum
 import requests
 
 from typing import Dict, Any, Optional, Union
 from polyswarmartifact.schema import ScanMetadata
+
+
+logger = logging.getLogger(__name__)
 
 
 class Phase(enum.Enum):
@@ -64,9 +69,33 @@ class Bounty:
             return response.content
 
     def post_response(self, scan_response: Union[Vote, Assertion]):
+        wrapper = _set_http_debug if logger.getEffectiveLevel() >= logging.DEBUG else contextlib.nullcontext
+
         session = requests.Session()
-        with session.post(self.response_url, json=dataclasses.asdict(scan_response)) as response:
+        with wrapper(), session.post(self.response_url, json=dataclasses.asdict(scan_response)) as response:
+            if logger.getEffectiveLevel() >= logging.DEBUG:
+                logger.debug('request body: %s', response.request.body)
+                logger.debug('response body: %s', response.text)
             response.raise_for_status()
 
     def __dict__(self):
         return dataclasses.asdict(self)
+
+
+@contextlib.contextmanager
+def _set_http_debug():
+    """
+    Produce logs of HTTP calls
+
+    Produces logs by manipulating `http.client.HTTPConnetion`,
+    as suggested on https://github.com/urllib3/urllib3/issues/107#issuecomment-11690207
+    """
+    # You'll need to do this before urllib3 creates any http connection objects
+    import http.client
+
+    initial_debuglevel = http.client.HTTPConnection.debuglevel
+    http.client.HTTPConnection.debuglevel = 5
+    try:
+        yield
+    finally:
+        http.client.HTTPConnection.debuglevel = initial_debuglevel

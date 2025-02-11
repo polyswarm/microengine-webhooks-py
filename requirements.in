@@ -1,0 +1,15 @@
+Flask~=1.1.2
+jinja2<3.1.0
+itsdangerous~=2.0.1
+werkzeug<2.1
+bump2version
+celery[pytest]~=5.2
+microengine-utils~=1.5.0
+polyswarm-artifact~=1.4.3
+pytest~=5.4.2
+pytest-cov~=2.10.1
+pytest-mock~=3.3.1
+python-dateutil~=2.8.1
+python-json-logger~=2.0.1
+requests~=2.22.0
+requests-mock~=1.8.0
