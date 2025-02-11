@@ -5,7 +5,6 @@ from microengine_utils.constants import SCAN_FAIL, SCAN_SUCCESS, SCAN_TIME, SCAN
 
 from microenginewebhookspy.models import Bounty, ScanResult, Verdict, Assertion, Phase
 from microenginewebhookspy import settings
-from microenginewebhookspy.scan import scan, compute_bid
 
 
 celery_app = Celery('tasks', broker=settings.BROKER)
@@ -29,6 +28,7 @@ class MetricsTask(Task):
 
 @celery_app.task(base=MetricsTask)
 def handle_bounty(bounty):
+    from microenginewebhookspy.scan import scan, compute_bid
     bounty = Bounty(**bounty)
     scan_result = ScanResult()
     with handle_bounty.metrics.timer(SCAN_TIME):
