@@ -2,9 +2,6 @@ import hmac
 import os
 import random
 import requests
-from logging import getLogger
-
-logger = getLogger(__name__)
 
 from flask import Flask, request, jsonify
 
