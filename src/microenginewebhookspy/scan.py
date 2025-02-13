@@ -27,4 +27,4 @@ def compute_bid(bounty: Bounty, scan_result: ScanResult) -> int:
 
     bid = min_bid + max(scan_result.confidence * (max_bid - min_bid), 0)
     bid = min(bid, max_bid)
-    return bid
+    return int(bid)
