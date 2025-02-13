@@ -2,6 +2,9 @@ import hmac
 import os
 import random
 import requests
+from logging import getLogger
+
+logger = getLogger(__name__)
 
 from flask import Flask, request, jsonify
 
@@ -25,7 +28,14 @@ empty_digest = hmac.new(WEBHOOK_SECRET.encode('utf-8'), b'', digestmod='sha256')
 
 @application.route("/", methods=['POST'])
 def test_receiver():
-    body = request.get_json()
+    breakpoint()
+    try:
+        body = request.get_json()
+    except Exception as err:
+        if 'Failed to decode JSON' not in str(err):
+            # Do not swallow unknown errors
+            raise
+        body = request.get_data()
     print(body)
     return jsonify("OK"), 200
 
