@@ -25,7 +25,6 @@ empty_digest = hmac.new(WEBHOOK_SECRET.encode('utf-8'), b'', digestmod='sha256')
 
 @application.route("/", methods=['POST'])
 def test_receiver():
-    breakpoint()
     try:
         body = request.get_json()
     except Exception as err:
