@@ -3,6 +3,7 @@ import logging
 import dataclasses
 import enum
 import requests
+import functools
 
 from typing import Dict, Any, Optional, Union
 from polyswarmartifact.schema import ScanMetadata
@@ -14,6 +15,7 @@ logger = logging.getLogger(__name__)
 def ignore_extra_fields(cls):
     class_init = cls.__init__
 
+    @functools.wraps(class_init)
     def new_init(self, *args, **kwargs):
         fields = {f.name for f in dataclasses.fields(cls)}
         new_kwargs = {k: v for k, v in kwargs.items() if k in fields}
