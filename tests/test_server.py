@@ -37,7 +37,9 @@ def test_valid_bounty_to_api(requests_mock):
                     expiration=datetime.datetime.now(datetime.timezone.utc).isoformat(),
                     phase='assertion_window',
                     response_url=response_url,
-                    rules={}
+                    rules={},
+                    duration=30,
+                    extra_spam='extra eggs',
                     )
     headers = {'X-POLYSWARM-EVENT': 'bounty'}
     response = client.post('/', headers=headers, json=dataclasses.asdict(bounty))

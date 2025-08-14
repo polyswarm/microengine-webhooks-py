@@ -3,12 +3,26 @@ import logging
 import dataclasses
 import enum
 import requests
+import functools
 
 from typing import Dict, Any, Optional, Union
 from polyswarmartifact.schema import ScanMetadata
 
 
 logger = logging.getLogger(__name__)
+
+
+def ignore_extra_fields(cls):
+    class_init = cls.__init__
+
+    @functools.wraps(class_init)
+    def new_init(self, *args, **kwargs):
+        fields = {f.name for f in dataclasses.fields(cls)}
+        new_kwargs = {k: v for k, v in kwargs.items() if k in fields}
+        class_init(self, *args, **new_kwargs)
+
+    cls.__init__ = new_init
+    return cls
 
 
 class Phase(enum.Enum):
@@ -49,6 +63,7 @@ class ScanResult:
         return Vote(self.verdict.value, self.metadata.dict())
 
 
+@ignore_extra_fields
 @dataclasses.dataclass(frozen=True)
 class Bounty:
     id: int
@@ -61,6 +76,8 @@ class Bounty:
     mimetype: Optional[str] = None
     phase: Optional[str] = None
     metadata: Optional[dict] = None
+    duration: Optional[str] = None
+    tasked_at: Optional[str] = None
 
     def fetch_artifact(self):
         session = requests.Session()
