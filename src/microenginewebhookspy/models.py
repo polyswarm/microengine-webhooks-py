@@ -61,6 +61,8 @@ class Bounty:
     mimetype: Optional[str] = None
     phase: Optional[str] = None
     metadata: Optional[dict] = None
+    duration: Optional[str] = None
+    tasked_at: Optional[str] = None
 
     def fetch_artifact(self):
         session = requests.Session()
