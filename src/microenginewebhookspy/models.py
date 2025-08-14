@@ -11,6 +11,18 @@ from polyswarmartifact.schema import ScanMetadata
 logger = logging.getLogger(__name__)
 
 
+def ignore_extra_fields(cls):
+    class_init = cls.__init__
+
+    def new_init(self, *args, **kwargs):
+        fields = {f.name for f in dataclasses.fields(cls)}
+        new_kwargs = {k: v for k, v in kwargs.items() if k in fields}
+        class_init(self, *args, **new_kwargs)
+
+    cls.__init__ = new_init
+    return cls
+
+
 class Phase(enum.Enum):
     ASSERTION = 'assertion'
     ARBITRATION = 'arbitration'
@@ -49,6 +61,7 @@ class ScanResult:
         return Vote(self.verdict.value, self.metadata.dict())
 
 
+@ignore_extra_fields
 @dataclasses.dataclass(frozen=True)
 class Bounty:
     id: int
