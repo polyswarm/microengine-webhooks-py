@@ -1,0 +1,40 @@
+[tool.pdm]
+package-dir = "src/"
+
+[project]
+name = "microenginewebhookspy"
+version = "0.2.1"
+description = "Exemplar microengine in python using webhooks"
+readme = "README.md"
+authors = [
+    {name = "PolySwarm Developers", email = "info@polyswarm.io"},
+]
+classifiers = [
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+requires-python = ">=3.6.5,<4"
+dependencies = [
+    "Flask",
+    "celery",
+    "microengine-utils",
+    "polyswarm-artifact",
+    "python-json-logger",
+    "requests",
+]
+license = "MIT"
+
+[project.urls]
+Homepage = "https://github.com/polyswarm/microengine-webhooks-py"
+
+[project.optional-dependencies]
+tests = [
+    "pytest",
+    "pytest-cov",
+    "pytest-mock",
+    "requests-mock",
+]
