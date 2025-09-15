@@ -1,4 +1,4 @@
-FROM nginx/unit:1.25.0-python3.9
+FROM nginx/unit:1.25.0-python3.11
 
 COPY nginx/*.json /docker-entrypoint.d/
 
