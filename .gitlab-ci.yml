@@ -72,6 +72,7 @@ build-worker:
 
 test:
   stage: test
+  needs: [build-worker]
   tags:
     - stage-kube-newer
   coverage: '/TOTAL.*\s+(\d+%)$/'
