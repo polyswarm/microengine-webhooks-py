@@ -1,4 +1,4 @@
-FROM nginx/unit:1.25.0-python3.11
+FROM nginx/unit:1.29.0-python3.11
 
 COPY nginx/*.json /docker-entrypoint.d/
 
@@ -6,11 +6,9 @@ WORKDIR /usr/src/app
 
 COPY requirements.txt .
 
-RUN apt update && apt install -y python3-pip \
-    && rm -rf /var/lib/apt/lists/* \
-    && pip3 install --no-cache-dir -r requirements.txt
+RUN python3 -m pip install --no-cache-dir -r requirements.txt
 
-COPY setup.py .
+COPY pyproject.toml .
 COPY src .
 COPY tests .
 
