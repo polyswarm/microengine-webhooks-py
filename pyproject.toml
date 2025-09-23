@@ -17,11 +17,11 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
 ]
-requires-python = ">=3.9,<4"
+requires-python = ">=3.10,<4"
 dependencies = [
     "Flask",
     "celery",
-    "microengine-utils",
+    "microengine-utils>=1.6.0",
     "polyswarm-artifact",
     "python-json-logger",
     "requests",
