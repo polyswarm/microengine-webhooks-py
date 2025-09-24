@@ -92,7 +92,7 @@ e2e:
   tags:
     - kube-new
   script:
-    - e2e run
+    - LOG_LEVEL=DEBUG e2e -v DEBUG run
 
 ###############################################################
 # Release Stage
