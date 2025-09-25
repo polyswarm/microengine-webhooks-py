@@ -1,7 +1,7 @@
 image: $REPO_URL/stage
 
 services:
-  - $REPO_URL/docker:dind
+  - $REPO_URL/public/docker/library/docker:dind
 
 stages:
   - build
@@ -11,16 +11,16 @@ stages:
   - deployment
 
 variables:
+  BASE_IMAGE_NAME: microengine-webhooks-py
   DOCKER_HOST: tcp://localhost:2376/
   DOCKER_TLS_CERTDIR: "/certs"
   DOCKER_TLS_VERIFY: 1
   DOCKER_CERT_PATH: "$DOCKER_TLS_CERTDIR/client"
-  BASE_IMAGE_NAME: microengine-webhooks-py
   WORKER_SUFFIX: worker
 
 default:
   before_script:
-    - sleep 2
+    - pip install -q --upgrade pip
     - pip install -q $END_TO_END_LIB@$CI_COMMIT_REF_NAME || pip install -q $END_TO_END_LIB
     - e2e init
 
