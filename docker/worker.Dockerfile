@@ -1,4 +1,4 @@
-FROM python:3.9-slim-bullseye
+FROM python:3.11-slim-bullseye
 
 ENV PROCESS_TYPE="celery" \
     PROCFILE="docker/Procfile" \
@@ -27,7 +27,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 USER worker
 
-COPY . .
+COPY --chown=worker:worker . .
 RUN pip install .
 
 EXPOSE 5000
