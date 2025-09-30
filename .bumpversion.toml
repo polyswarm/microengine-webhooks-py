@@ -1,0 +1,30 @@
+[tool.bumpversion]
+current_version = "0.2.1"
+commit = true
+tag = false
+sign_tags = true
+tag_name = "{new_version}"
+parse = "(?P<major>\\d+)\\.(?P<minor>\\d+)\\.(?P<patch>\\d+)(\\.dev(?P<dev>\\.d+)\\+(?P<local>[0-9a-fA-F]+))?"
+serialize = [
+    "{major}.{minor}.{patch}.dev{dev}+{local}{utcnow:%Y%m%d%H%M%S}",
+    "{major}.{minor}.{patch}.dev{dev}",
+    "{major}.{minor}.{patch}"
+]
+
+[tool.bumpversion.part.dev]
+first_value = "0"
+optional_value = ""
+
+[tool.bumpversion.part.local]
+first_value = ""
+optional_value = ""
+
+[[tool.bumpversion.files]]
+filename = "pyproject.toml"
+search = 'version = "{current_version}"'
+replace = 'version = "{new_version}"'
+
+[[tool.bumpversion.files]]
+filename = "src/microenginewebhookspy/__init__.py"
+search = "__version__ = '{current_version}'"
+replace = "__version__ = '{new_version}'"
