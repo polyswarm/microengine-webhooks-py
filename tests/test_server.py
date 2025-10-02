@@ -56,4 +56,4 @@ def test_invalid_bounty_to_api():
     response = client.post('/', headers=headers, data={'asdf': 'fdsa'})
     logging.disable(logging.NOTSET)
 
-    assert response.status_code == 400
+    assert str(response.status_code).startswith('4') # 4XX

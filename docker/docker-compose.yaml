@@ -19,7 +19,7 @@ services:
     environment:
       - PYTHONUNBUFFERED=1
       - CELERY_BROKER_URL=pyamqp://user:password@rabbitmq//
-      - PROCESS_TYPE=celery
+      - PROCESS_TYPE=worker
   integration:
     build:
       context: ../

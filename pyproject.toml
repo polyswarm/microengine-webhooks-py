@@ -1,6 +1,6 @@
 [project]
 name = "microenginewebhookspy"
-version = "0.2.1"
+version = "1.0.0"
 description = "Exemplar microengine in python using webhooks"
 readme = "README.md"
 authors = [
@@ -22,6 +22,7 @@ dependencies = [
     "polyswarm-artifact",
     "python-json-logger",
     "requests",
+    "urllib3>=1.26.5",
 ]
 license = "MIT"
 
@@ -34,4 +35,7 @@ tests = [
     "pytest-cov",
     "pytest-mock",
     "requests-mock",
+]
+gunicorn = [
+    "gunicorn",
 ]

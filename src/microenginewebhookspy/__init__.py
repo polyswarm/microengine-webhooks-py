@@ -1,6 +1,6 @@
-__version__ = '0.2.1'
+__version__ = '1.0.0'
 
-from datetime import datetime
+from datetime import datetime, timezone as tz
 from pythonjsonlogger import jsonlogger
 
 
@@ -15,7 +15,7 @@ class JSONFormatter(jsonlogger.JsonFormatter):
         super(JSONFormatter, self).add_fields(log_record, record, message_dict)
         if not log_record.get('timestamp'):
             # this doesn't use record.created, so it is slightly off
-            now = datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%S.%fZ')
+            now = datetime.now(tz.utc).strftime('%Y-%m-%dT%H:%M:%S.%fZ')
             log_record['timestamp'] = now
         if log_record.get('level'):
             log_record['level'] = log_record['level'].upper()
