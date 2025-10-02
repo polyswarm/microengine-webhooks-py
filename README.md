@@ -252,13 +252,6 @@ There are several test routes that trigger webhooks to the microengine for testi
 * `/test/analyze` Sends an analyze event, for testing an event type microengines won't respond to.
 
 
-## Deploying to kubernetes
+## Deploying with containers
 
-The included Chart and Dockerfiles make it easy to deploy to kubernetes.
-The steps below assume you have already configured helm 3 and kubernetes.
-
-1. Run/Use a Celery Broker.
-1. Fill in a `RELEASE_NAME` in Makefile.
-1. Change `HELM_VERSION` to the name of your helm 3 binary in your path.
-1. Fill in values and secrets in `chart/env/default`.
-1. `make install`.
+The included Dockerfiles have an example of how to deploy via nginx-unit using containers.
