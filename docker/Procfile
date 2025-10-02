@@ -1,4 +1,4 @@
-celery: celery -A microenginewebhookspy.tasks worker
+worker: celery -A microenginewebhookspy.tasks worker
 web: python -m gunicorn microenginewebhookspy.wsgi --bind 0.0.0.0
 integration: python -m flask run --host 0.0.0.0
 test: pytest --cov --cov-report=term-missing --cov-report=html --no-cov-on-fail --log-cli-level=DEBUG

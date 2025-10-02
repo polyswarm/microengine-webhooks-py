@@ -1,6 +1,6 @@
 FROM python:3.11-slim-bullseye
 
-ENV PROCESS_TYPE="celery" \
+ENV PROCESS_TYPE="worker" \
     PROCFILE="docker/Procfile" \
     FLASK_APP="tests.integration.base"
 
