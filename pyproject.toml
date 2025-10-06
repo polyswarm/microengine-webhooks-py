@@ -16,13 +16,10 @@ classifiers = [
 ]
 requires-python = ">=3.10,<4"
 dependencies = [
-    "Flask",
+    "psengine>=2.4.6",
     "celery",
-    "microengine-utils>=1.6.0",
-    "polyswarm-artifact",
-    "python-json-logger",
     "requests",
-    "urllib3>=1.26.5",
+    "urllib3>=2.0",
 ]
 license = "MIT"
 
@@ -32,9 +29,11 @@ Homepage = "https://github.com/polyswarm/microengine-webhooks-py"
 [project.optional-dependencies]
 tests = [
     "pytest",
-    "pytest-cov",
     "pytest-mock",
     "requests-mock",
+]
+http = [
+    "itsdangerous",
 ]
 gunicorn = [
     "gunicorn",
