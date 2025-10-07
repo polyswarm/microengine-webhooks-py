@@ -1,3 +1,11 @@
+[build-system]
+requires = ["setuptools>=61.2"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+py-modules = ["engine"]
+include-package-data = false
+
 [project]
 name = "microenginewebhookspy"
 version = "1.0.0"
@@ -32,9 +40,23 @@ tests = [
     "pytest-mock",
     "requests-mock",
 ]
-http = [
+web = [
+    "flask",
     "itsdangerous",
 ]
 gunicorn = [
     "gunicorn",
 ]
+
+[tool.flake8]
+max-line-length = "120"
+exclude = "test"
+
+[tool.yapf]
+column_limit = "120"
+based_on_style = "pep8"
+align_closing_bracket_with_visual_indent = "true"
+coalesce_brackets = "true"
+# dedent_closing_brackets = "true"
+# indent_dictionary_value = "true"
+# split_before_dot = "true"

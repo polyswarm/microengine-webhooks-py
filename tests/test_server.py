@@ -3,10 +3,8 @@ import datetime
 import logging
 import pytest
 
-import microenginewebhookspy.tasks
-
-from microenginewebhookspy.views import Bounty
-from microenginewebhookspy.wsgi import app
+from psengine.bounty import Bounty, forge_local_bounty
+from microenginewebhookspy.wsgi import application as app
 
 from tests import EICAR_STRING
 
@@ -29,7 +27,7 @@ def test_valid_bounty_to_api(requests_mock):
     # Setup http mocks
     requests_mock.get(artifact_uri, body=EICAR_STRING)
     requests_mock.post(response_url, text='Success')
-    bounty = Bounty(id=987654321,
+    bounty: Bounty = forge_local_bounty(id=987654321,
                     artifact_type='FILE',
                     artifact_uri=artifact_uri,
                     sha256=eicar_sha356,
