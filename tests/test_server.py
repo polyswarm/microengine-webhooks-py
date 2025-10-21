@@ -1,57 +1,42 @@
-import dataclasses
 import datetime
 import logging
 import pytest
 
 from psengine.bounty import Bounty, forge_local_bounty
-from microenginewebhookspy.wsgi import application as app
-
-from tests import EICAR_STRING
 
 
-@pytest.fixture(autouse=True)
-def replace_scan(celery_app):
-    @celery_app.task
-    def scan(bounty: Bounty):
-        pass
+def test_valid_bounty_to_api(mocker, wsgi_app):
+    mock_deliver = mocker.patch('psengine.wsgi.backend._deliver', return_value=None)
 
-    microenginewebhookspy.tasks.handle_bounty = scan
+    client = wsgi_app
 
-
-def test_valid_bounty_to_api(requests_mock):
-    client = app.test_client()
-
-    artifact_uri = 'mock://example.com/eicar'
-    response_url = 'mock://example.com/response'
-    eicar_sha356 = '275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f'
-    # Setup http mocks
-    requests_mock.get(artifact_uri, body=EICAR_STRING)
-    requests_mock.post(response_url, text='Success')
-    bounty: Bounty = forge_local_bounty(id=987654321,
-                    artifact_type='FILE',
-                    artifact_uri=artifact_uri,
-                    sha256=eicar_sha356,
-                    mimetype='text/plain',
-                    expiration=datetime.datetime.now(datetime.timezone.utc).isoformat(),
-                    phase='assertion_window',
-                    response_url=response_url,
-                    rules={},
-                    duration=30,
-                    extra_spam='extra eggs',
-                    )
-    headers = {'X-POLYSWARM-EVENT': 'bounty'}
-    response = client.post('/', headers=headers, json=dataclasses.asdict(bounty))
+    bounty: Bounty = forge_local_bounty(
+        artifact_type='FILE',
+        data=b'test',
+        mimetype='text/plain',
+        expiration=datetime.timedelta(seconds=300),
+        min_allowed_bid=1,
+        max_allowed_bid=1000,
+    )
+    environ_overrides = {'HTTP_X_POLYSWARM_EVENT': 'bounty'}
+    response = client.post('/eicar-sample', json=bounty, environ_overrides=environ_overrides)
 
     assert response.status_code == 202
+    mock_deliver.assert_called_once()
 
 
-def test_invalid_bounty_to_api():
-    client = app.test_client()
+def test_invalid_bounty_to_api(wsgi_app):
+    client = wsgi_app
 
     # Silencing expected log about the failure to parse this data
     logging.disable(logging.CRITICAL)
-    headers = {'X-POLYSWARM-EVENT': 'bounty'}
-    response = client.post('/', headers=headers, data={'asdf': 'fdsa'})
+    environ_overrides = {'HTTP_X_POLYSWARM_EVENT': 'bounty'}
+    response = client.post(
+        '/eicar-sample',
+        data='{"broken": ',
+        content_type='application/json',
+        environ_overrides=environ_overrides,
+    )
     logging.disable(logging.NOTSET)
 
     assert str(response.status_code).startswith('4') # 4XX
