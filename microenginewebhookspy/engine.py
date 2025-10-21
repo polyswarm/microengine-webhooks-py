@@ -13,6 +13,14 @@ EICAR_STRING = base64.b64decode(
 )
 
 
+@engine.register_head
+def head():
+    return {
+        'product': 'eicar-sample',
+        'scanner': {'version': '1.0'}
+    }
+
+
 @engine.register_analyzer
 def analyze(bounty):
     contents = psengine.get_artifact_bytes(bounty)
