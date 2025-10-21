@@ -24,7 +24,7 @@ classifiers = [
 ]
 requires-python = ">=3.10,<4"
 dependencies = [
-    "psengine>=2.4.6",
+    "psengine>=3.0.4",
     "celery",
     "requests",
     "urllib3>=2.0",
