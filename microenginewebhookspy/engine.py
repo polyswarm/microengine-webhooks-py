@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
-__version__ = '0.0.1'
+__version__ = '1.0'
 
+import logging
 import base64
-
 import psengine
 
+log = logging.getLogger(__name__)
 
 engine = psengine.EngineManager(name='eicar-sample', vendor='sample-vendorname')
 
@@ -22,20 +23,21 @@ def head():
 
 
 @engine.register_analyzer
-def analyze(bounty):
+def analyze(bounty: psengine.Bounty) -> psengine.Analysis:
     contents = psengine.get_artifact_bytes(bounty)
+
     if EICAR_STRING in contents:
-        return {
-            'verdict': psengine.MALICIOUS,
-            'bid': psengine.bid_max(bounty),
-            'metadata': {'malware_family': 'EICAR', 'confidence': 1.0},
-        }
+        verdict = psengine.MALICIOUS
+        metadata = {'malware_family': 'EICAR', 'confidence': 1.0}
     else:
-        return {
-            'verdict': psengine.BENIGN,
-            'bid': psengine.bid_max(bounty),
-            'metadata': {},
-        }
+        verdict = psengine.BENIGN
+        metadata = {}
+
+    return {
+        'verdict': verdict,
+        'bid': psengine.bid_max(bounty),
+        'metadata': metadata,
+    }
 
 
 if __name__ == '__main__':
