@@ -158,7 +158,7 @@ you can change the `engine.py` file to have this new lines:
  @engine.register_analyzer
  def analyze(bounty: psengine.Bounty) -> psengine.Analysis:
 +    if not psengine.bounty.is_file_artifact(bounty):
-+        log.error("Recieved non-file artifact bounty")
++        log.error("Received non-file artifact bounty")
 +        return psengine.bounty.UNSUPPORTED
      contents = psengine.get_artifact_bytes(bounty)
 ```
