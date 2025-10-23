@@ -14,7 +14,7 @@ Clone this repository.
 
 `git clone https://github.com/polyswarm/microengine-webhooks-py.git`
 
-Install the package allowing further edit of contents. Do it you virtualenv (or not, but we recommend running in a virtualenv).
+Install the package in development mode to allow customization. We recommend using a [virtual environment](https://docs.python.org/3/library/venv.html).
 
 `pip install -e .[web,gunicorn,tests]`
 
