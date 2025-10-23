@@ -57,7 +57,7 @@ tests/test_server.py::test_invalid_bounty_to_api PASSED [100%]
 ============= 4 passed, 4 warnings in 0.09s =============
 ```
 
-Now you have a working Engine that detacts EICAR as malware.
+Now you have a working Engine that detects EICAR as malware.
 
 ## Implementing your first engine
 
