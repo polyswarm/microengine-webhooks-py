@@ -92,7 +92,7 @@ For the full ruleset, have a peek at the `psengine` codebase.
 ## Test your engine
 
 During the implementation, you can issue ad-hoc tests calling the `python -m microenginewebhookspy.engine analyze` tool.
-Also works by executing the file directly:
+Alternatively, it also works by executing the file directly:
 
 ```console
 $ cd microenginewebhookspy
