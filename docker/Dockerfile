@@ -9,7 +9,7 @@ COPY requirements.txt .
 RUN python3 -m pip install --no-cache-dir -r requirements.txt
 
 COPY pyproject.toml .
-COPY src .
+COPY . .
 COPY tests .
 
 EXPOSE 8080
