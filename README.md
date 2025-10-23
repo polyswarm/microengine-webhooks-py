@@ -1,19 +1,229 @@
 # microengine-webhooks-py
 
-PolySwarm is changing from a websocket based bounty delivery to webhooks.
+PolySwarm changed from a websocket based bounty delivery to webhooks.
 Webhooks reduce wasted bandwidth by sending only relevant bounty events to each engine.
 
 This project has a simple webhook microengine that can be used as a base to build more complicated microengines.
 Users should be able to quickly get running by editing only one file with two functions to get started.
 
-## How it works
+# Quickstart
 
-PolySwarm will send events as HTTP POST requests to the webhook.
-Microengines need only to listen passively until a new event arrives.
+## Install and test
 
-Nginx Unit acts as the base web server to receive HTTP requests.
-A python Flask application runs with Unit to handle the requests.
-The event requests are all parsed, and handled in python code.
+Clone this repository.
+
+`git clone https://github.com/polyswarm/microengine-webhooks-py.git`
+
+Install the package allowing further edit of contents. Do it you virtualenv (or not, but we recommend running in a virtualenv).
+
+`pip install -e .[web,gunicorn,tests]`
+
+Check that the instalation is working correctly
+
+```console
+$ python -m microenginewebhookspy.engine analyze --check-eicar
+{
+  "metadata": {
+    "product": "eicar-sample",
+    "scanner": {
+      "version": "1.0",
+      "environment": {
+        "operating_system": "Linux",
+        "architecture": "x86_64"
+      }
+    },
+    "malware_family": "EICAR",
+    "confidence": 1.0
+  },
+  "verdict": "malicious",
+  "bid": 999900000000000000
+}
+```
+
+Run the tests
+
+```console
+$ pytest -v
+================== test session starts ==================
+(...)
+configfile: pyproject.toml
+plugins: requests-mock-1.12.1, mock-3.15.1
+collected 4 items
+
+tests/test_scan.py::test_scan_file_malicious PASSED [ 25%]
+tests/test_scan.py::test_scan_file_benign PASSED  [ 50%]
+tests/test_server.py::test_valid_bounty_to_api PASSED [ 75%]
+tests/test_server.py::test_invalid_bounty_to_api PASSED [100%]
+============= 4 passed, 4 warnings in 0.09s =============
+```
+
+Now you have a working Engine that detacts EICAR as malware.
+
+## Implementing your first engine
+
+Inside `microenginewebhookspy/engine.py` there is two functions in less than
+40 lines of code. The very important function is `analyze(bounty)`.
+Here is where your will wire your malware detection tool.
+
+```py
+@engine.register_analyzer
+def analyze(bounty: psengine.Bounty) -> psengine.Analysis:
+    contents = psengine.get_artifact_bytes(bounty)
+
+    if EICAR_STRING in contents:
+        verdict = psengine.MALICIOUS
+        metadata = {'malware_family': 'EICAR', 'confidence': 1.0}
+    else:
+        verdict = psengine.BENIGN
+        metadata = {}
+
+    return {
+        'verdict': verdict
+        'bid': psengine.bid_max(bounty),
+        'metadata': metadata,
+    }
+```
+
+Your return dict will be checked against `psengine.Analysis` rules,
+e.g. a `verdict` is present and `metadata['confidence']` is a float
+between 0.0 and 1.0 _if provided_.
+
+## Test your engine
+
+During the implementation, you can issue ad-hoc tests calling the `python -m microenginewebhookspy.engine analyze` tool.
+Also works by executing the file directly:
+
+```console
+$ cd microenginewebhookspy
+$ ./engine.py analyze --help
+Usage: eicar-sample analyze [OPTIONS] [ARTIFACTS]...
+
+  Analyze artifacts
+
+Options:
+  -v, --verbose
+  --check-empty     Verify this engine can analyze an empty
+                                  bounty
+  --check-eicar     Verify this engine can analyze EICAR test
+                    file
+  --check-wicar, --check-exploit-url
+                    Verify this engine can analyze the WICAR
+                    exploit kit URL
+  -t, --artifact-type [bounty|file|url]
+                    Artifact type to use when constructing
+                    bounties. 'bounty' loads manually
+                    constructed bounties, treating each argument
+                    as the path to a JSON-encoded bounty object
+--help              Show this message and exit.
+```
+
+The returned value will be checked for structure.
+
+This CLI can issue scans for files in your disk, for local testing pourposes:
+
+```console
+$ ./engine.py analyze ~/Downloads/Firefox\ Installer.exe
+{
+  ...
+  "verdict": "benign",
+  "bid": 999900000000000000
+}
+```
+
+We recommend that you always check scans for:
+- EMPTY bounties
+- EICAR if creating a file-scanning engines
+- WICAR if creating a url-scanning engine
+- Return UNKNOWN for unsupported file types
+
+## Example: Checking the file type
+
+If you run an analysis for WICAR the template implementation will return BENIGN:
+
+```console
+$ ./engine.py analyze --check-wicar
+{
+  ...
+  "verdict": "benign",
+  "bid": 999900000000000000
+}
+...
+AssertionError: Received 'benign' instead of malicious
+```
+
+As an example, for handling URL bounties gracefully,
+you can change the `engine.py` file to have this new lines:
+
+```diff
+ @engine.register_analyzer
+ def analyze(bounty: psengine.Bounty) -> psengine.Analysis:
++    if not psengine.bounty.is_file_artifact(bounty):
++        log.error("Recieved non-file artifact bounty")
++        return psengine.bounty.UNSUPPORTED
+     contents = psengine.get_artifact_bytes(bounty)
+```
+
+It will now change to answer non-file bounties with an UNSUPPORTED verdict.
+
+```console
+$ ./engine.py analyze --check-wicar
+2025-10-22 20:30:19,022 - ERROR [engine.py:28][analyze] Received non-file artifact bounty
+{
+  ...
+  "verdict": "unknown",
+  "bid": 0
+}
+...
+AssertionError: Received 'unknown' instead of malicious
+```
+
+Which is fine for an EICAR engine, that is not supposed to handle URL bounties.
+
+# Where to go from here?
+
+This simple engine now does everything in the correct way.
+Your existing malware-detection tool can be wired inside `engine.py` freely.
+
+Some nice tooling exists inside `psengine` package. For example, if your tool
+can natively scan files running in the filesystem via CLI, there is a
+context manager function that downloads the file and stores in a temporary
+folder on disk, easing your life:
+
+```diff
+ @engine.register_analyzer
+ def analyze(bounty: psengine.Bounty) -> psengine.Analysis:
+-    contents = psengine.get_artifact_bytes(bounty)
++    with psengine.ArtifactTempfile(bounty) as path:
++        my_tool_do_handle_a_file(path)
+```
+
+That and other niceties are covered in full on the [PolySwarm Documentation](https://docs.polyswarm.io/suppliers),
+specially on the Psengine SDK section: https://docs.polyswarm.io/suppliers/psengine/
+
+# How it works?
+
+During the tests above the `engine.py analyze` tool simulated a Bounty
+already received and enqueued for processing inside a Celery worker.
+Then it calls the `analyze()` function with that Bounty "dict".
+
+For real engines, PolySwarm will send events as HTTP POST requests
+to your server webhook, configured in the PolySwarm website.
+Engines need to listen passively until a new event arrives.
+
+Your webserver will receive HTTP requests. A python WSGI application running
+handles the requests and enqueues a job to be handled by a worker.
+
+The worker runs your function `analyze()` and it decides the appropriate response.
+In the same job the worker sends the response back to PolySwarm.
+
+# How to run this for real?
+
+More details about the workflow briefly explained above, recommendations and
+alternatives for common scenarios are also available
+in the [PolySwarm Documentation](https://docs.polyswarm.io/suppliers).
+
+
+
 
 Each event request includes three special headers; `X-POLYSWARM-EVENT`, `X-POLYSWARM-SIGNATURE`, and `X-POLYSWARM-DELIVERY`.
 
