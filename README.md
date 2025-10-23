@@ -87,6 +87,7 @@ def analyze(bounty: psengine.Bounty) -> psengine.Analysis:
 Your return dict will be checked against `psengine.Analysis` rules,
 e.g. a `verdict` is present and `metadata['confidence']` is a float
 between 0.0 and 1.0 _if provided_.
+For the full ruleset, have a peek at the `psengine` codebase.
 
 ## Test your engine
 
