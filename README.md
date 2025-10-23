@@ -61,8 +61,8 @@ Now you have a working Engine that detacts EICAR as malware.
 
 ## Implementing your first engine
 
-Inside `microenginewebhookspy/engine.py` there is two functions in less than
-40 lines of code. The very important function is `analyze(bounty)`.
+Inside `microenginewebhookspy/engine.py` there are two functions in less than
+40 lines of code. The very important part is the function is `analyze(bounty)`.
 Here is where your will wire your malware detection tool.
 
 ```py
