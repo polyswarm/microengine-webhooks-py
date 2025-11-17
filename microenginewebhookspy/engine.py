@@ -3,11 +3,11 @@ __version__ = '1.0'
 
 import logging
 import base64
-import psengine
+import polyswarm_engine as ps
 
 log = logging.getLogger(__name__)
 
-engine = psengine.EngineManager(name='eicar-sample', vendor='sample-vendorname')
+engine = ps.EngineManager(name='eicar-sample', vendor='sample-vendorname')
 
 EICAR_STRING = base64.b64decode(
     b'WDVPIVAlQEFQWzRcUFpYNTQoUF4pN0NDKTd9JEVJQ0FSLVNUQU5EQVJELUFOVElWSVJVUy1URVNULUZJTEUhJEgrSCo='
@@ -23,23 +23,23 @@ def head():
 
 
 @engine.register_analyzer
-def analyze(bounty: psengine.Bounty) -> psengine.Analysis:
-    if not psengine.bounty.is_file_artifact(bounty):
+def analyze(bounty: ps.Bounty) -> ps.Analysis:
+    if not ps.bounty.is_file_artifact(bounty):
         log.error("Received non-file artifact bounty")
-        return psengine.bounty.UNSUPPORTED
+        return ps.bounty.UNSUPPORTED
 
-    contents = psengine.get_artifact_bytes(bounty)
+    contents = ps.get_artifact_bytes(bounty)
 
     if EICAR_STRING in contents:
-        verdict = psengine.MALICIOUS
+        verdict = ps.MALICIOUS
         metadata = {'malware_family': 'EICAR', 'confidence': 1.0}
     else:
-        verdict = psengine.BENIGN
+        verdict = ps.BENIGN
         metadata = {}
 
     return {
         'verdict': verdict,
-        'bid': psengine.bid_max(bounty),
+        'bid': ps.bid_max(bounty),
         'metadata': metadata,
     }
 

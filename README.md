@@ -66,28 +66,30 @@ In `microenginewebhookspy/engine.py` there are two functions in less than
 to wire up the malware detection tool.
 
 ```py
+# import polyswarm_engine as ps
+
 @engine.register_analyzer
-def analyze(bounty: psengine.Bounty) -> psengine.Analysis:
-    contents = psengine.get_artifact_bytes(bounty)
+def analyze(bounty: ps.Bounty) -> ps.Analysis:
+    contents = ps.get_artifact_bytes(bounty)
 
     if EICAR_STRING in contents:
-        verdict = psengine.MALICIOUS
+        verdict = ps.MALICIOUS
         metadata = {'malware_family': 'EICAR', 'confidence': 1.0}
     else:
-        verdict = psengine.BENIGN
+        verdict = ps.BENIGN
         metadata = {}
 
     return {
         'verdict': verdict
-        'bid': psengine.bid_max(bounty),
+        'bid': ps.bid_max(bounty),
         'metadata': metadata,
     }
 ```
 
-Your return dict will be checked against `psengine.Analysis` rules,
+Your return dict will be checked against `polyswarm_engine.Analysis` rules,
 e.g. a `verdict` is present and `metadata['confidence']` is a float
 between 0.0 and 1.0 _if provided_.
-For the full ruleset, have a peek at the `psengine` codebase.
+For the full ruleset, have a peek at the `polyswarm_engine` codebase.
 
 ## Test your engine
 
@@ -156,12 +158,14 @@ As an example, for handling URL bounties gracefully,
 you can change the `engine.py` file to have this new lines:
 
 ```diff
+# import polyswarm_engine as ps
+
  @engine.register_analyzer
- def analyze(bounty: psengine.Bounty) -> psengine.Analysis:
-+    if not psengine.bounty.is_file_artifact(bounty):
+ def analyze(bounty: ps.Bounty) -> ps.Analysis:
++    if not ps.bounty.is_file_artifact(bounty):
 +        log.error("Received non-file artifact bounty")
-+        return psengine.bounty.UNSUPPORTED
-     contents = psengine.get_artifact_bytes(bounty)
++        return ps.bounty.UNSUPPORTED
+     contents = ps.get_artifact_bytes(bounty)
 ```
 
 It will now change to answer non-file bounties with an UNSUPPORTED verdict.
@@ -185,21 +189,23 @@ Which is fine for an EICAR engine, that is not supposed to handle URL bounties.
 This simple engine now does everything in the correct way.
 Your existing malware-detection tool can be wired inside `engine.py` freely.
 
-Some nice tooling exists inside `psengine` package. For example, if your tool
+Some nice tooling exists inside `polyswarm_engine` package. For example, if your tool
 can natively scan files running in the filesystem via CLI, there is a
 context manager function that downloads the file and stores in a temporary
 folder on disk, easing your life:
 
 ```diff
+# import polyswarm_engine as ps
+
  @engine.register_analyzer
- def analyze(bounty: psengine.Bounty) -> psengine.Analysis:
--    contents = psengine.get_artifact_bytes(bounty)
-+    with psengine.ArtifactTempfile(bounty) as path:
+ def analyze(bounty: ps.Bounty) -> ps.Analysis:
+-    contents = ps.get_artifact_bytes(bounty)
++    with ps.ArtifactTempfile(bounty) as path:
 +        my_tool_do_handle_a_file(path)
 ```
 
 That and other niceties are covered in full on the [PolySwarm Documentation](https://docs.polyswarm.io/suppliers),
-specially on the Psengine SDK section: https://docs.polyswarm.io/suppliers/psengine/
+specially on the Psengine SDK section: https://docs.polyswarm.io/suppliers/polyswarm_engine/
 
 # How it works?
 

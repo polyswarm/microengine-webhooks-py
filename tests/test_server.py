@@ -2,11 +2,11 @@ import datetime
 import logging
 import pytest
 
-from psengine.bounty import Bounty, forge_local_bounty
+from polyswarm_engine.bounty import Bounty, forge_local_bounty
 
 
 def test_valid_bounty_to_api(mocker, wsgi_app):
-    mock_deliver = mocker.patch('psengine.wsgi.backend._deliver', return_value=None)
+    mock_deliver = mocker.patch('polyswarm_engine.wsgi.backend._deliver', return_value=None)
 
     client = wsgi_app
 

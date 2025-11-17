@@ -2,9 +2,9 @@ import datetime
 
 
 
-from psengine.bounty import forge_local_bounty
-from psengine.bidutils import to_wei
-from psengine.constants import BENIGN, MALICIOUS
+from polyswarm_engine.bounty import forge_local_bounty
+from polyswarm_engine.bidutils import to_wei
+from polyswarm_engine.constants import BENIGN, MALICIOUS
 from microenginewebhookspy.engine import engine
 
 from tests import EICAR_STRING

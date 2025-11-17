@@ -6,7 +6,7 @@ from microenginewebhookspy.wsgi import application, ValidateSenderMiddleware
 
 @pytest.fixture
 def wsgi_app():
-    from psengine.wsgi import backend
+    from polyswarm_engine.wsgi import backend
     from microenginewebhookspy.engine import engine
 
     # Wire the WSGI to the Engine directly
