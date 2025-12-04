@@ -152,7 +152,7 @@ AssertionError: Received 'benign' instead of malicious
 ```
 
 As an example, for handling URL bounties gracefully,
-you can change the `engine.py` file to have this new lines:
+you can change the `engine.py` file to have these new lines:
 
 ```diff
 # import polyswarm_engine as ps
@@ -184,12 +184,12 @@ Which is fine for an EICAR engine, that is not supposed to handle URL bounties.
 # Where to go from here?
 
 This simple engine now does everything in the correct way.
-Your existing malware-detection tool can be wired inside `engine.py` freely.
+Your existing malware-detection tool can be freely integrated within `engine.py`.
 
-Some nice tooling exists inside `polyswarm_engine` package. For example, if your tool
-can natively scan files running in the filesystem via CLI, there is a
-context manager function that downloads the file and stores in a temporary
-folder on disk, easing your life:
+To help you get started, tooling exists inside the `polyswarm_engine` package.
+For example, if your tool can natively scan files on the filesystem via CLI, there
+is a context manager function that downloads the file and stores in a temporary
+folder, making your life easier:
 
 ```diff
 # import polyswarm_engine as ps
