@@ -205,7 +205,7 @@ folder on disk, easing your life:
 ```
 
 That and other niceties are covered in full on the [PolySwarm Documentation](https://docs.polyswarm.io/suppliers),
-specially on the Psengine SDK section: https://docs.polyswarm.io/suppliers/polyswarm_engine/
+specially on the PolySwarm Engine Package section: https://docs.polyswarm.io/suppliers/polyswarm-engine-package/
 
 # How it works?
 
@@ -218,7 +218,7 @@ to your server webhook, configured in the PolySwarm website.
 Engines need to listen passively until a new event arrives.
 
 Your webserver will receive HTTP requests. A python WSGI application running
-handles the requests and enqueues a job to be handled by a worker.
+handles the requests and enqueues a job to be processed by a worker.
 
 The worker runs your function `analyze()` and it decides the appropriate response.
 In the same job the worker sends the response back to PolySwarm.
@@ -230,7 +230,9 @@ alternatives for common scenarios are also available
 in the [PolySwarm Documentation](https://docs.polyswarm.io/suppliers).
 
 
-
+---
+# MOVE TO DOCS :point-down:
+---
 
 Each event request includes three special headers; `X-POLYSWARM-EVENT`, `X-POLYSWARM-SIGNATURE`, and `X-POLYSWARM-DELIVERY`.
 
@@ -273,149 +275,40 @@ After that, it combines the `ScanResult`, and `bid`, into an `Assertion` or `Vot
 The `Assertion` or `Vote` is sent back at `bounty.response_url`.
 
 
-## Customizing a microengine
+#### Verdict meanings
 
-Customizing your engine is as simple as overriding just 1-2 functions.
-Inside `scan.py` there are two functions, `scan` and `compute_bid`.
-These functions are called in synchronous code.
+Microengines can assert with Unknown verdicts, Malicious, Suspicious, or Benign.
 
+Be aware that **Unknown** and **Suspicious** are purely informational verdicts
+and produce zero bids and zero distribution of the artifact bounty during the
+arbitration phase.
 
-To get started, clone, fork, or download this project, and move to the Overriding Scan section.
-
-
-### Overriding Scan
-
-The scan function is the core of any microengine.
-It takes in a `Bounty` for some artifact, and returns a `ScanResult`.
-
-The signature for scan is as follows.
-
-`def scan(bounty: Bounty) -> ScanResult:`.
-
-The example code is a simple EICAR scanner.
-It checks that the bounty contains a file, and compares the contents against the EICAR string.
-`polyswarm-artifact` is used to simplify metadata generation, and file comparison.
-
-More complex engines use `subprocess` to execute some software for scanning, or send the file to another service for scanning.
-Developers have the whole python language at their disposal to develop this function.
-
-```python
-import base64
-
-from microenginewebhookspy.models import Bounty, ScanResult, Verdict
-
-from polyswarmartifact.schema import ScanMetadata
-
-
-
-EICAR_STRING = base64.b64decode(
-    b'WDVPIVAlQEFQWzRcUFpYNTQoUF4pN0NDKTd9JEVJQ0FSLVNUQU5EQVJELUFOVElWSVJVUy1URVNULUZJTEUhJEgrSCo='
-)
-
-
-def scan(bounty: Bounty) -> ScanResult:
-    content = bounty.fetch_artifact()
-    metadata = ScanMetadata().set_malware_family('')
-    if content == EICAR_STRING:
-        metadata.set_malware_family('EICAR-TEST-FILE')
-        return ScanResult(verdict=Verdict.MALICIOUS, confidence=1.0, metadata=metadata)
-    else:
-        return ScanResult(verdict=Verdict.BENIGN, confidence=1.0, metadata=metadata)
-```
-
-`Bounty` and `ScanResult` are defined in `src/microenginewebhookspy/models.py`.
-
-**Bounty**
-```python
-@dataclasses.dataclass(frozen=True)
-class Bounty:
-    guid: str
-    artifact_type: str
-    artifact_url: str
-    sha256: str
-    mimetype: str
-    expiration: str
-    phase: str
-    response_url: str
-    rules: Dict[str, Any]
-
-    def fetch_artifact(self):
-        session = requests.Session()
-        with session.get(self.artifact_url) as response:
-            response.raise_for_status()
-            return response.content
-
-    def post_response(self, scan_response: Union[Assertion, Vote]):
-        session = requests.Session()
-        with session.post(self.response_url, json=dataclasses.asdict(scan_response)) as response:
-            response.raise_for_status()
-
-    def __dict__(self):
-        return dataclasses.asdict(self)
-```
-
-**ScanResult**
-```python
-@dataclasses.dataclass
-class ScanResult:
-    verdict: Verdict
-    metadata: ScanMetadata
-    confidence: float = dataclasses.field(default=1)
-
-    def to_assertion(self, bid: int = 0):
-        return Assertion(self.verdict.value, bid, self.metadata.dict())
-
-    def to_vote(self):
-        return Vote(self.verdict.value, self.metadata.dict())
-```
-
-#### Suspicious or Unknown
-
-
-In the latest iteration of the marketplace, more verdict options have been added.
-Microengines can now assert with Suspicious, or Unknown verdicts, in addition to the original Malicious and Benign verdicts.
-
-Unknown indicates that the engine is working, but doesn't have enough information to make a determination.
+**Unknown** indicates that the engine is working, but doesn't have enough information to make a determination. Or that something unexpected occured and a verdict cannot be produced.
 That could be the file isn't supported, it's taking to long to scan, or the engine just didn't want to scan it.
-Engines that don't respond at all are considered failing.
-Too many failures will pause the flow of bounties to the engine until the issue is resolved.
-Make sure to use Unknown in all cases where the engine is unable to make a determination.
 
-Suspicious is a new response that gives new information about an artifact.
-It's ideal for situations where confidence is low, and an engine does not want to report false negatives, nor positives.
+Make sure to use Unknown in all cases where the engine is unable to make a determination. Engines that don't respond at all are considered failing.
+Too many failures should automatically pause the flow of bounties to the engine
+until the issue is resolved.
+
+**Malicious** is a response meaning that a malware is detected.
+We recommend to provide the `malware_family` and a `confidence` value if available.
+
+**Suspicious** is a response that gives new information about an artifact.
+It's ideal for situations where confidence is low,
+and an engine does not want to report false negatives, nor positives.
+
+**Benign** is a response meaning that a malware was not detected.
+We recommend to provide a `confidence` value if available.
 
 
 ### Overriding Bid
-
-
-By default, `compute_bid` uses the confidence, treated as a percentage, to put the bid on a range from min to max.
-The return value here is an integer, where 1 NCT is 1000000000000000000.
-
-
-```python
-from microenginewebhookspy.models import Bounty, ScanResult
-from microenginewebhookspy import settings
-
-
-def compute_bid(bounty: Bounty, scan_result: ScanResult) -> int:
-    max_bid = bounty.rules.get(settings.MAX_BID_RULE_NAME, settings.DEFAULT_MAX_BID)
-    min_bid = bounty.rules.get(settings.MIN_BID_RULE_NAME, settings.DEFAULT_MIN_BID)
-
-    bid = min_bid + max(scan_result.confidence * (max_bid - min_bid), 0)
-    bid = min(bid, max_bid)
-    return bid
-```
-
+TBD
 
 ### Everything is customizable
 
 Everything in this project is customizable.
-This marks a change from polyswarm-client, where developers just created a module to run inside polyswarm-client.
 
 For example, developers may want to do any of the following.
-
-* Change the `metadata` field in `ScanResult` to use a `Dict` instead of polyswarm-artifact.
-* Add more fields in `ScanResult` that `compute_bid` uses to generate a bid.
 * Remove `Celery` in favor of another asynchronous execution solution.
 * Change from Flask to Django, or another web framework.
 * Change languages.
@@ -426,12 +319,13 @@ For example, developers may want to do any of the following.
 
 While this project is meant to be customizable, there are still a few requirements that must be met.
 
-* `bounty` events should have a fast response, where the scanning is done asynchronously.
+* `bounty` HTTP events should have a fast response,
+deferring the scanning to bedone asynchronously.
 * `ping` events must respond with a 2XX status.
 * Assertions must be sent as an HTTP POST request to `bounty.response_url`.
 * All Requests to and from PolySwarm are json format.
-* Assertions must match the schema.
-* Votes must match the given schema.
+* Assertions must match the `polyswarm_engine.Analysis` schema.
+* Votes must match the `polyswarm_engine.Analysis` schema.
 
 
 **Assertions**
@@ -456,7 +350,6 @@ While this project is meant to be customizable, there are still a few requiremen
 ### Local testing
 
 Pytest is used for unit testing the python code.
-Run `pytest -s` to start tests.
 
 In addition, there is a Flask app used for integration tests.
 Run the docker-compose file with `docker-compose -f docker/docker-compose up`.
