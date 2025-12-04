@@ -1,8 +1,5 @@
 # microengine-webhooks-py
 
-PolySwarm changed from a websocket based bounty delivery to webhooks.
-Webhooks reduce wasted bandwidth by sending only relevant bounty events to each engine.
-
 This project has a simple webhook microengine that can be used as a base to build more complicated microengines.
 Users should be able to quickly get running by editing only one file with two functions to get started.
 
