@@ -201,8 +201,8 @@ folder, making your life easier:
 +        my_tool_do_handle_a_file(path)
 ```
 
-That and other niceties are covered in full on the [PolySwarm Documentation](https://docs.polyswarm.io/suppliers),
-specially on the PolySwarm Engine Package section: https://docs.polyswarm.io/suppliers/polyswarm-engine-package/
+That and other niceties are covered in full on the [PolySwarm Documentation](https://docs.polyswarm.io/engines),
+specially on the PolySwarm Engine Package section: https://docs.polyswarm.io/engines/polyswarm-engine-package/
 
 # How it works?
 
@@ -224,4 +224,4 @@ In the same job the worker sends the response back to PolySwarm.
 
 More details about the workflow briefly explained above, recommendations and
 alternatives for common scenarios are also available
-in the [PolySwarm Documentation](https://docs.polyswarm.io/suppliers).
+in the [PolySwarm Documentation](https://docs.polyswarm.io/engines).
