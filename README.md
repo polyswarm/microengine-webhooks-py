@@ -152,7 +152,7 @@ AssertionError: Received 'benign' instead of malicious
 ```
 
 As an example, for handling URL bounties gracefully,
-you can change the `engine.py` file to have this new lines:
+you can change the `engine.py` file to have these new lines:
 
 ```diff
 # import polyswarm_engine as ps
