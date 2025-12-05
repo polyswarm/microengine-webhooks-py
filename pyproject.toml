@@ -1,6 +1,14 @@
+[build-system]
+requires = ["setuptools>=61.2"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+py-modules = ["engine"]
+include-package-data = false
+
 [project]
 name = "microenginewebhookspy"
-version = "1.0.0"
+version = "2.0.0"
 description = "Exemplar microengine in python using webhooks"
 readme = "README.md"
 authors = [
@@ -16,13 +24,10 @@ classifiers = [
 ]
 requires-python = ">=3.10,<4"
 dependencies = [
-    "Flask",
+    "polyswarm_engine>=3.2.0",
     "celery",
-    "microengine-utils>=1.6.0",
-    "polyswarm-artifact",
-    "python-json-logger",
     "requests",
-    "urllib3>=1.26.5",
+    "urllib3>=2.0",
 ]
 license = "MIT"
 
@@ -32,10 +37,26 @@ Homepage = "https://github.com/polyswarm/microengine-webhooks-py"
 [project.optional-dependencies]
 tests = [
     "pytest",
-    "pytest-cov",
     "pytest-mock",
     "requests-mock",
+]
+web = [
+    "flask",
+    "itsdangerous",
 ]
 gunicorn = [
     "gunicorn",
 ]
+
+[tool.flake8]
+max-line-length = "120"
+exclude = "test"
+
+[tool.yapf]
+column_limit = "120"
+based_on_style = "pep8"
+align_closing_bracket_with_visual_indent = "true"
+coalesce_brackets = "true"
+# dedent_closing_brackets = "true"
+# indent_dictionary_value = "true"
+# split_before_dot = "true"

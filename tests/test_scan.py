@@ -1,72 +1,60 @@
-import dataclasses
 import datetime
 
-from io import BytesIO
 
-from microenginewebhookspy.models import Bounty, Verdict, Assertion
-from microenginewebhookspy.utils import to_wei
-from microenginewebhookspy.tasks import handle_bounty
+
+from polyswarm_engine.bounty import forge_local_bounty
+from polyswarm_engine.bidutils import to_wei
+from polyswarm_engine.constants import BENIGN, MALICIOUS
+from microenginewebhookspy.engine import engine
 
 from tests import EICAR_STRING
 
 
-def test_scan_file_malicious(requests_mock, mocker):
-    # Setup mock assertion
-    spy = mocker.spy(Bounty, 'post_response')
-    artifact_uri = 'mock://example.com/eicar'
+def test_scan_file_malicious(requests_mock):
     response_url = 'mock://example.com/response'
-    eicar_sha256 = '275a021bbfb6489e54d471899f7db9d1663fc695ec2fe2a2c4538aabf651fd0f'
     # Setup http mocks
-    requests_mock.get(artifact_uri, body=BytesIO(EICAR_STRING))
     requests_mock.post(response_url, text='Success')
 
-    bounty = Bounty(id=12345678,
-                    artifact_type='FILE',
-                    artifact_uri=artifact_uri,
-                    sha256=eicar_sha256,
-                    mimetype='text/plain',
-                    expiration=datetime.datetime.now(datetime.timezone.utc).isoformat(),
-                    phase='assertion_window',
-                    response_url=response_url,
-                    rules={
-                        'max_allowed_bid': to_wei(1),
-                        'min_allowed_bid': to_wei(1) / 16,
-                    }
-                    )
+    bounty = forge_local_bounty(artifact_type='FILE',
+                                data=EICAR_STRING,
+                                mimetype='text/plain',
+                                expiration=datetime.timedelta(seconds=300),
+                                min_allowed_bid=to_wei(1) / 16,
+                                max_allowed_bid=to_wei(1),
+                                )
+    bounty['id'] = 12345678
+    bounty['response_url'] = response_url
 
-    handle_bounty(dataclasses.asdict(bounty))
+    with engine.create_backend() as backend:
+        backend.update_analysis_environment()
+        backend._deliver = backend._http_deliver
+        backend.process_bounty(bounty)
 
     # Not testing metadata, since it may change version over version
-    called_assertion = spy.mock_calls[0][1][1]
-    assert called_assertion.verdict == Verdict.MALICIOUS.value
+    posted_json = requests_mock.last_request.json()
+    assert posted_json['verdict'] == MALICIOUS
 
 
-def test_scan_file_benign(requests_mock, mocker):
-    # Setup mock assertion
-    spy = mocker.spy(Bounty, 'post_response')
-    artifact_uri = 'mock://example.com/not-eicar'
+def test_scan_file_benign(requests_mock):
     response_url = 'mock://example.com/response'
-    eicar_sha256 = '09688de240a0b492aca7af12057b7f24cd5d0439f14d40b9eec1ce920bc82cb6'
     # Setup http mocks
-    requests_mock.get(artifact_uri, text='not-eicar')
     requests_mock.post(response_url, text='Success')
 
-    bounty = Bounty(id=23456789,
-                    artifact_type='FILE',
-                    artifact_uri=artifact_uri,
-                    sha256=eicar_sha256,
-                    mimetype='text/plain',
-                    expiration=datetime.datetime.now(datetime.timezone.utc).isoformat(),
-                    phase='assertion_window',
-                    response_url=response_url,
-                    rules={
-                        'max_allowed_bid': to_wei(1),
-                        'min_allowed_bid': to_wei(1) / 16,
-                    }
-                    )
+    bounty = forge_local_bounty(artifact_type='FILE',
+                                data=b'this is benign file',
+                                mimetype='text/plain',
+                                expiration=datetime.timedelta(seconds=300),
+                                min_allowed_bid=to_wei(1) / 16,
+                                max_allowed_bid=to_wei(1),
+                                )
+    bounty['id'] = 23456789
+    bounty['response_url'] = response_url
 
-    handle_bounty(dataclasses.asdict(bounty))
+    with engine.create_backend() as backend:
+        backend.update_analysis_environment()
+        backend._deliver = backend._http_deliver
+        backend.process_bounty(bounty)
 
     # Not testing metadata, since it may change version over version
-    called_assertion = spy.mock_calls[0][1][1]
-    assert called_assertion.verdict == Verdict.BENIGN.value
+    posted_json = requests_mock.last_request.json()
+    assert posted_json['verdict'] == BENIGN
