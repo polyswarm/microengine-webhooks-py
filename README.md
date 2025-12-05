@@ -119,7 +119,7 @@ Options:
 
 The returned value will be checked for structure.
 
-This CLI can issue scans for files in your disk, for local testing pourposes:
+This CLI can issue scans for files in your disk, for local testing purpoposes:
 
 ```console
 $ ./engine.py analyze ~/Downloads/Firefox\ Installer.exe
