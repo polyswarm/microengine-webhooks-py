@@ -1,9 +1,0 @@
-Flask~=3.1
-werkzeug~=3.1
-celery[pytest]~=5.3
-polyswarm_engine~=3.2.0
-pytest~=8.4
-pytest-cov~=7.0
-pytest-mock~=3.15
-requests~=2.32
-requests-mock~=1.12
