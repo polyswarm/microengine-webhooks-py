@@ -222,6 +222,18 @@ In the same job the worker sends the response back to PolySwarm.
 
 # How to run this for real?
 
+Running this outside of the testing scenario needs:
+- An HTTP webserver running your WSGI application `microenginewebhookspy.wsgi`
+- An AMQP broker (RabbitMQ, for example)
+- A Celery worker running the `microenginewebhookspy.tasks` worker
+
+Both the HTTP server and the Celery worker need to share the `PSENGINE_BROKER_URL`
+environment variable, set by default to `'amqp://user:password@rabbitmq:5672'`.
+
+When running outside of the local host, you will need to adjust this envvar.
+Refer to the `docker/docker-compose.yaml` for a full local example including an
+integration server on the port 5000, able to send bounties via HTTP for testing.
+
 More details about the workflow briefly explained above, recommendations and
 alternatives for common scenarios are also available
 in the [PolySwarm Documentation](https://docs.polyswarm.io/engines).
