@@ -1,6 +1,14 @@
+[build-system]
+requires = ["setuptools>=61.2"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+py-modules = ["engine"]
+include-package-data = false
+
 [project]
 name = "microenginewebhookspy"
-version = "1.0.0"
+version = "2.0.2"
 description = "Exemplar microengine in python using webhooks"
 readme = "README.md"
 authors = [
@@ -16,13 +24,10 @@ classifiers = [
 ]
 requires-python = ">=3.10,<4"
 dependencies = [
-    "Flask",
+    "polyswarm_engine>=3.2.0",
     "celery",
-    "microengine-utils>=1.6.0",
-    "polyswarm-artifact",
-    "python-json-logger",
-    "requests",
-    "urllib3>=1.26.5",
+    "requests>=2.32",
+    "urllib3>=2.0",
 ]
 license = "MIT"
 
@@ -31,11 +36,60 @@ Homepage = "https://github.com/polyswarm/microengine-webhooks-py"
 
 [project.optional-dependencies]
 tests = [
-    "pytest",
-    "pytest-cov",
-    "pytest-mock",
+    "pytest~=8.4",
+    "pytest-mock~=3.15",
     "requests-mock",
+    "celery[pytest]>=5.3",
+]
+web = [
+    "flask>=3.1",
+    "werkzeug>=3.1",
+    "itsdangerous",
 ]
 gunicorn = [
     "gunicorn",
 ]
+
+[tool.flake8]
+max-line-length = "120"
+exclude = "test"
+
+[tool.yapf]
+column_limit = "120"
+based_on_style = "pep8"
+align_closing_bracket_with_visual_indent = "true"
+coalesce_brackets = "true"
+# dedent_closing_brackets = "true"
+# indent_dictionary_value = "true"
+# split_before_dot = "true"
+
+[tool.bumpversion]
+current_version = "2.0.2"
+commit = true
+tag = false
+sign_tags = true
+tag_name = "{new_version}"
+parse = "(?P<major>\\d+)\\.(?P<minor>\\d+)\\.(?P<patch>\\d+)(\\.dev(?P<dev>\\.d+)\\+(?P<local>[0-9a-fA-F]+))?"
+serialize = [
+    "{major}.{minor}.{patch}.dev{dev}+{local}{utcnow:%Y%m%d%H%M%S}",
+    "{major}.{minor}.{patch}.dev{dev}",
+    "{major}.{minor}.{patch}"
+]
+
+[tool.bumpversion.part.dev]
+first_value = "0"
+optional_value = ""
+
+[tool.bumpversion.part.local]
+first_value = ""
+optional_value = ""
+
+[[tool.bumpversion.files]]
+filename = "pyproject.toml"
+search = 'version = "{current_version}"'
+replace = 'version = "{new_version}"'
+
+[[tool.bumpversion.files]]
+filename = "microenginewebhookspy/__init__.py"
+search = "__version__ = '{current_version}'"
+replace = "__version__ = '{new_version}'"
